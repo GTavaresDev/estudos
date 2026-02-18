@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conversation Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0e0e;
+  --surface: #161616;
+  --card: #1e1e1e;
+  --border: #2e2e2e;
+  --text: #f0ede6;
+  --muted: #888;
+  --accent: #e8c547;
+  --green: #5fcf80;
+  --red: #e05c5c;
+  --blue: #5b9cf6;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Lora',serif; min-height:100vh; }
+
+/* Layout */
+.app { display:grid; grid-template-columns:260px 1fr; min-height:100vh; }
+
+/* Sidebar */
+.sidebar {
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  padding:1.5rem 1.2rem;
+  display:flex; flex-direction:column; gap:1.5rem;
+}
+.logo {
+  font-family:'Syne',sans-serif;
+  font-size:0.7rem;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:var(--accent);
+}
+.sidebar-title {
+  font-family:'Syne',sans-serif;
+  font-size:1.3rem;
+  font-weight:800;
+  line-height:1.2;
+}
+.topic-input-wrap { display:flex; flex-direction:column; gap:0.5rem; }
+.topic-label { font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); font-family:'Syne',sans-serif; }
+.topic-input {
+  background:#111;
+  border:1px solid var(--border);
+  border-radius:4px;
+  color:var(--text);
+  font-family:'Lora',serif;
+  font-size:0.85rem;
+  padding:0.6rem 0.8rem;
+  width:100%;
+  outline:none;
+  transition:border-color 0.2s;
+}
+.topic-input:focus { border-color:var(--accent); }
+.topic-input::placeholder { color:#555; }
+
+.generate-btn {
+  background:var(--accent);
+  color:#000;
+  border:none;
+  border-radius:4px;
+  padding:0.65rem;
+  font-family:'Syne',sans-serif;
+  font-size:0.8rem;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  cursor:pointer;
+  width:100%;
+  transition:opacity 0.15s;
+}
+.generate-btn:hover { opacity:0.85; }
+
+.phase-list { display:flex; flex-direction:column; gap:0.3rem; }
+.phase-item {
+  font-size:0.72rem;
+  padding:0.5rem 0.7rem;
+  border-radius:3px;
+  color:var(--muted);
+  font-family:'Syne',sans-serif;
+  cursor:pointer;
+  display:flex; align-items:center; gap:0.5rem;
+  transition:all 0.15s;
+}
+.phase-item.active { background:rgba(232,197,71,0.12); color:var(--accent); }
+.phase-item.done { color:var(--green); }
+.phase-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:currentColor; flex-shrink:0;
+}
+
+.tip-box {
+  margin-top:auto;
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:0.8rem;
+  font-size:0.7rem;
+  line-height:1.6;
+  color:var(--muted);
+}
+.tip-box strong { color:var(--text); display:block; margin-bottom:0.3rem; font-family:'Syne',sans-serif; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; }
+
+/* Main */
+.main { padding:2rem; overflow-y:auto; display:flex; flex-direction:column; gap:2rem; }
+
+.phase-header {
+  border-bottom:1px solid var(--border);
+  padding-bottom:1rem;
+}
+.phase-number {
+  font-family:'Syne',sans-serif;
+  font-size:0.62rem;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:0.3rem;
+}
+.phase-name {
+  font-family:'Syne',sans-serif;
+  font-size:1.8rem;
+  font-weight:800;
+}
+.phase-desc {
+  font-size:0.82rem;
+  color:var(--muted);
+  margin-top:0.4rem;
+  font-style:italic;
+}
+
+/* Question cards */
+.questions-grid { display:flex; flex-direction:column; gap:1rem; }
+
+.q-card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:1.2rem 1.4rem;
+  position:relative;
+  transition:border-color 0.2s;
+}
+.q-card:hover { border-color:#444; }
+.q-card.answered { border-left:3px solid var(--green); }
+
+.q-meta {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:0.7rem;
+}
+.q-tag {
+  font-family:'Syne',sans-serif;
+  font-size:0.58rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  padding:0.25rem 0.6rem;
+  border-radius:20px;
+  border:1px solid var(--border);
+  color:var(--muted);
+}
+.q-tag.speaking { border-color:#5b9cf680; color:var(--blue); }
+.q-tag.listening { border-color:#5fcf8080; color:var(--green); }
+.q-tag.extended { border-color:#e8c54780; color:var(--accent); }
+
+.q-number {
+  font-family:'Syne',sans-serif;
+  font-size:0.65rem;
+  color:#444;
+}
+
+.q-text {
+  font-size:1.05rem;
+  line-height:1.65;
+  margin-bottom:1rem;
+}
+
+.q-text .blank {
+  display:inline-block;
+  background:rgba(232,197,71,0.15);
+  border-bottom:2px solid var(--accent);
+  padding:0 0.4rem;
+  min-width:80px;
+  color:var(--accent);
+  font-style:italic;
+  border-radius:2px 2px 0 0;
+}
+
+.q-hint {
+  font-size:0.72rem;
+  color:#555;
+  font-style:italic;
+  margin-bottom:1rem;
+  padding-left:0.8rem;
+  border-left:2px solid #333;
+  line-height:1.5;
+}
+
+.q-actions { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; }
+
+.btn-sm {
+  font-family:'Syne',sans-serif;
+  font-size:0.62rem;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  padding:0.4rem 0.8rem;
+  border-radius:3px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--muted);
+  cursor:pointer;
+  transition:all 0.15s;
+}
+.btn-sm:hover { border-color:#666; color:var(--text); }
+.btn-sm.primary { border-color:var(--green); color:var(--green); }
+.btn-sm.primary:hover { background:rgba(95,207,128,0.1); }
+.btn-sm.danger { border-color:var(--red); color:var(--red); }
+
+.timer-badge {
+  margin-left:auto;
+  font-family:'Syne',sans-serif;
+  font-size:0.7rem;
+  color:var(--accent);
+  background:rgba(232,197,71,0.1);
+  padding:0.25rem 0.6rem;
+  border-radius:3px;
+}
+
+/* Timer modal */
+.timer-overlay {
+  display:none;
+  position:fixed; inset:0;
+  background:rgba(0,0,0,0.85);
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:1.5rem;
+}
+.timer-overlay.active { display:flex; }
+.timer-circle {
+  width:160px; height:160px;
+  border-radius:50%;
+  border:3px solid var(--accent);
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column;
+  font-family:'Syne',sans-serif;
+}
+.timer-num { font-size:3rem; font-weight:800; color:var(--accent); line-height:1; }
+.timer-label { font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); }
+.timer-q { max-width:480px; text-align:center; font-style:italic; font-size:1rem; line-height:1.6; color:var(--muted); padding:0 1rem; }
+.timer-close {
+  font-family:'Syne',sans-serif;
+  font-size:0.7rem;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--muted);
+  padding:0.5rem 1.2rem;
+  border-radius:3px;
+  cursor:pointer;
+}
+
+/* Placeholder state */
+.placeholder {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:50vh; text-align:center; gap:1rem;
+  color:var(--muted);
+}
+.placeholder-icon { font-size:2.5rem; opacity:0.3; }
+.placeholder-text { font-size:0.85rem; max-width:300px; line-height:1.6; }
+
+/* Score bar */
+.score-bar {
+  display:flex; align-items:center; gap:1rem;
+  padding:0.8rem 1rem;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:6px;
+  font-family:'Syne',sans-serif;
+  font-size:0.7rem;
+}
+.score-num { font-size:1.4rem; font-weight:800; color:var(--green); }
+.score-total { color:var(--muted); }
+.score-label { font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); }
+
+@media(max-width:640px) {
+  .app { grid-template-columns:1fr; }
+  .sidebar { border-right:none; border-bottom:1px solid var(--border); }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div>
+      <p class="logo">English Practice</p>
+      <h1 class="sidebar-title">Conversation<br>Drill</h1>
+    </div>
+
+    <div class="topic-input-wrap">
+      <label class="topic-label">Assunto da aula</label>
+      <input class="topic-input" id="topicInput" placeholder="ex: artificial intelligence" maxlength="40">
+      <button class="generate-btn" onclick="generateLesson()">▶ Gerar aula</button>
+    </div>
+
+    <div>
+      <p class="topic-label" style="margin-bottom:0.6rem">Fases</p>
+      <div class="phase-list" id="phaseList">
+        <div class="phase-item" onclick="goToPhase(0)"><span class="phase-dot"></span>Warm-up</div>
+        <div class="phase-item" onclick="goToPhase(1)"><span class="phase-dot"></span>Opinion & argument</div>
+        <div class="phase-item" onclick="goToPhase(2)"><span class="phase-dot"></span>Deep dive</div>
+        <div class="phase-item" onclick="goToPhase(3)"><span class="phase-dot"></span>Long listening</div>
+        <div class="phase-item" onclick="goToPhase(4)"><span class="phase-dot"></span>Wrap-up</div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <strong>Como usar</strong>
+      Digite o assunto, clique em "Gerar aula". Nas perguntas, o <span style="color:var(--accent)">campo amarelo</span> já vem preenchido com o seu tema. Use o timer para se forçar a falar sem parar.
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main" id="mainArea">
+    <div class="placeholder">
+      <div class="placeholder-icon">💬</div>
+      <p class="placeholder-text">Digite um assunto ao lado e clique em <strong>"Gerar aula"</strong> para montar sua sessão de conversação.</p>
+      <p class="placeholder-text" style="font-size:0.72rem;opacity:0.6">Exemplos: <em>social media, climate change, remote work, technology, travel, food culture…</em></p>
+    </div>
+  </main>
+</div>
+
+<!-- TIMER OVERLAY -->
+<div class="timer-overlay" id="timerOverlay">
+  <div class="timer-circle">
+    <span class="timer-num" id="timerNum">60</span>
+    <span class="timer-label">segundos</span>
+  </div>
+  <p class="timer-q" id="timerQ"></p>
+  <button class="timer-close" onclick="closeTimer()">✕ Fechar</button>
+</div>
+
+<script>
+const phases = [
+  {
+    name: "Warm-up",
+    desc: "Quebre o gelo — frases curtas, sem pressão. Objetivo: soltar a língua.",
+    questions: [
+      {
+        text: `What do you already know about <span class="blank" id="b0"></span>?`,
+        hint: "Resposta alvo: 3–5 frases. Não pense muito — fale o que vier. Objetivo: ativar vocabulário que você já tem.",
+        tag: "speaking",
+        time: 45
+      },
+      {
+        text: `When was the first time you heard about <span class="blank" id="b1"></span>?`,
+        hint: "Conte uma mini-história. Use past tenses naturalmente.",
+        tag: "speaking",
+        time: 45
+      },
+      {
+        text: `If you had to describe <span class="blank" id="b2"></span> to a child in two sentences, what would you say?`,
+        hint: "Exercício de síntese — obriga você a usar linguagem simples e direta.",
+        tag: "speaking",
+        time: 60
+      }
+    ]
+  },
+  {
+    name: "Opinion & Argument",
+    desc: "Dê opiniões e defenda-as por pelo menos 60 segundos seguidos.",
+    questions: [
+      {
+        text: `What do you think about <span class="blank"></span>? Do you have a strong opinion on it?`,
+        hint: "Use: 'I strongly believe…', 'From my perspective…', 'What strikes me most is…'. Meta: não pare antes de 60 segundos.",
+        tag: "extended",
+        time: 60
+      },
+      {
+        text: `What are the biggest advantages and disadvantages of <span class="blank"></span>?`,
+        hint: "Estruture assim: 'On one hand… On the other hand… However, I think that…'",
+        tag: "extended",
+        time: 75
+      },
+      {
+        text: `Do you think <span class="blank"></span> has changed in the last 10 years? How?`,
+        hint: "Compare passado e presente. Use: 'used to', 'whereas', 'has become', 'dramatically shifted'.",
+        tag: "speaking",
+        time: 60
+      },
+      {
+        text: `If you could change one thing about <span class="blank"></span>, what would it be and why?`,
+        hint: "Hipótese + justificativa. 'If I could… I would… because… This would lead to…'",
+        tag: "extended",
+        time: 75
+      }
+    ]
+  },
+  {
+    name: "Deep Dive",
+    desc: "Perguntas mais complexas — respostas longas esperadas. Este é o core da aula.",
+    questions: [
+      {
+        text: `How does <span class="blank"></span> affect people's daily lives? Give specific examples.`,
+        hint: "Cite pelo menos 2 exemplos concretos. Use: 'For instance…', 'A clear example of this is…', 'Take the case of…'",
+        tag: "extended",
+        time: 90
+      },
+      {
+        text: `What kind of person is most interested in <span class="blank"></span>, and why do you think that is?`,
+        hint: "Exercício de análise de público/perfil. Desenvolva o raciocínio — não dê só uma resposta de 1 frase.",
+        tag: "extended",
+        time: 90
+      },
+      {
+        text: `If <span class="blank"></span> didn't exist, what would the world look like?`,
+        hint: "Hipótese contrafactual — exige raciocínio em cadeia. 'Without it… we would… which means… and consequently…'",
+        tag: "extended",
+        time: 90
+      },
+      {
+        text: `What's a common misconception people have about <span class="blank"></span>?`,
+        hint: "Ótima para praticar argumentação. Estruture: 'Many people think… but in reality… The truth is…'",
+        tag: "speaking",
+        time: 75
+      }
+    ]
+  },
+  {
+    name: "Long Listening",
+    desc: "Agora VOCÊ ouve. Seu parceiro fala por 90s–2min sobre o tema. Você escuta, toma nota mental e responde.",
+    questions: [
+      {
+        text: `Ask your partner: "Can you tell me everything you know about <span class="blank"></span> without stopping for 90 seconds?"`,
+        hint: "🎧 Ouça com atenção. Quando terminar, resuma em voz alta o que entendeu — sem ler, só da memória.",
+        tag: "listening",
+        time: 120
+      },
+      {
+        text: `Ask your partner: "What's your personal story or experience with <span class="blank"></span>?"`,
+        hint: "🎧 Escute ativamente. Depois, faça 2 perguntas de follow-up baseadas no que ouviu. Ex: 'You mentioned X — could you expand on that?'",
+        tag: "listening",
+        time: 120
+      },
+      {
+        text: `Ask your partner: "Can you argue against <span class="blank"></span> for one minute, even if you actually support it?"`,
+        hint: "🎧 Exercício de devil's advocate. Ouça e depois concorde ou refute cada ponto levantado.",
+        tag: "listening",
+        time: 90
+      }
+    ]
+  },
+  {
+    name: "Wrap-up",
+    desc: "Consolide o que foi falado. Síntese e reflexão.",
+    questions: [
+      {
+        text: `What's the most interesting thing that came up in our conversation about <span class="blank"></span>?`,
+        hint: "Síntese livre. Ótimo para ver se você reteve os pontos principais da conversa.",
+        tag: "speaking",
+        time: 60
+      },
+      {
+        text: `Did talking about <span class="blank"></span> change your opinion at all? Why or why not?`,
+        hint: "Meta-reflexão. Mesmo que não mudou, explique por quê a sua visão é sólida.",
+        tag: "speaking",
+        time: 60
+      },
+      {
+        text: `What's one question about <span class="blank"></span> that we didn't cover that you'd still like to explore?`,
+        hint: "Abertura para próximas aulas. Pratique formular perguntas de forma natural e curiosa.",
+        tag: "speaking",
+        time: 45
+      }
+    ]
+  }
+];
+
+let currentPhase = 0;
+let answered = {};
+let timerInterval = null;
+let topicVal = '';
+
+function generateLesson() {
+  topicVal = document.getElementById('topicInput').value.trim();
+  if (!topicVal) {
+    document.getElementById('topicInput').focus();
+    return;
+  }
+  answered = {};
+  currentPhase = 0;
+  renderPhase(0);
+  updatePhaseList();
+}
+
+function renderPhase(idx) {
+  currentPhase = idx;
+  const phase = phases[idx];
+  const main = document.getElementById('mainArea');
+
+  const answered_here = phase.questions.map((_,i) => answered[`${idx}-${i}`] ? true : false);
+  const doneCount = answered_here.filter(Boolean).length;
+
+  let html = `
+    <div class="score-bar">
+      <div>
+        <div class="score-label">Progresso desta fase</div>
+        <div><span class="score-num">${doneCount}</span><span class="score-total"> / ${phase.questions.length}</span></div>
+      </div>
+      <div style="flex:1;height:4px;background:#222;border-radius:2px;overflow:hidden">
+        <div style="width:${(doneCount/phase.questions.length)*100}%;height:100%;background:var(--green);transition:width 0.4s"></div>
+      </div>
+    </div>
+    <div class="phase-header">
+      <p class="phase-number">Fase ${idx+1} de ${phases.length}</p>
+      <h2 class="phase-name">${phase.name}</h2>
+      <p class="phase-desc">${phase.desc}</p>
+    </div>
+    <div class="questions-grid">
+  `;
+
+  phase.questions.forEach((q, i) => {
+    const isDone = answered[`${idx}-${i}`];
+    const qText = q.text.replace(/<span class="blank"[^>]*><\/span>/g, `<span class="blank">${topicVal}</span>`);
+    html += `
+      <div class="q-card ${isDone ? 'answered' : ''}" id="qcard-${idx}-${i}">
+        <div class="q-meta">
+          <span class="q-tag ${q.tag}">${q.tag === 'speaking' ? '🗣 Speaking' : q.tag === 'listening' ? '🎧 Listening' : '🔥 Extended'}</span>
+          <span class="q-number">#${i+1}</span>
+        </div>
+        <p class="q-text">${qText}</p>
+        <p class="q-hint">${q.hint}</p>
+        <div class="q-actions">
+          <button class="btn-sm" onclick="startTimer(${q.time}, \`${qText.replace(/`/g,"'")}\`)">⏱ ${q.time}s timer</button>
+          <button class="btn-sm primary" onclick="markDone(${idx},${i})">${isDone ? '✓ Feito' : 'Marcar feita'}</button>
+          ${idx < phases.length-1 && i === phase.questions.length-1 ? `<button class="btn-sm" style="margin-left:auto;border-color:var(--accent);color:var(--accent)" onclick="goToPhase(${idx+1})">Próxima fase →</button>` : ''}
+        </div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+
+  // Navigation
+  html += `<div style="display:flex;gap:0.8rem;padding-top:0.5rem">`;
+  if (idx > 0) html += `<button class="btn-sm" onclick="goToPhase(${idx-1})">← Fase anterior</button>`;
+  if (idx < phases.length-1) html += `<button class="btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="goToPhase(${idx+1})">Próxima fase →</button>`;
+  html += `</div>`;
+
+  main.innerHTML = html;
+  main.scrollTo({ top: 0, behavior: 'smooth' });
+  updatePhaseList();
+}
+
+function goToPhase(idx) {
+  if (!topicVal) return;
+  renderPhase(idx);
+}
+
+function markDone(phaseIdx, qIdx) {
+  answered[`${phaseIdx}-${qIdx}`] = true;
+  renderPhase(phaseIdx);
+}
+
+function updatePhaseList() {
+  const items = document.querySelectorAll('.phase-item');
+  items.forEach((el, i) => {
+    el.classList.remove('active','done');
+    const phase = phases[i];
+    const allDone = phase.questions.every((_,j) => answered[`${i}-${j}`]);
+    if (allDone) el.classList.add('done');
+    else if (i === currentPhase) el.classList.add('active');
+  });
+}
+
+function startTimer(seconds, question) {
+  clearInterval(timerInterval);
+  let remaining = seconds;
+  document.getElementById('timerNum').textContent = remaining;
+  document.getElementById('timerQ').textContent = question.replace(/<[^>]+>/g,'');
+  document.getElementById('timerOverlay').classList.add('active');
+
+  timerInterval = setInterval(() => {
+    remaining--;
+    document.getElementById('timerNum').textContent = remaining;
+    if (remaining <= 10) document.getElementById('timerNum').style.color = 'var(--red)';
+    else document.getElementById('timerNum').style.color = 'var(--accent)';
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+      document.getElementById('timerNum').textContent = '✓';
+    }
+  }, 1000);
+}
+
+function closeTimer() {
+  clearInterval(timerInterval);
+  document.getElementById('timerOverlay').classList.remove('active');
+}
+</script>
+</body>
+</html>
