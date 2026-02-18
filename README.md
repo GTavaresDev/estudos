@@ -16,6 +16,7 @@ O projeto foi desenhado para simular uma mini plataforma de aula:
 
 ```text
 estudos/
+  index.html
   src/
     index.html
   README.md
@@ -35,6 +36,9 @@ estudos/
 - `src/index.html`
   - layout base da pagina (estrutura sem CSS/JS inline)
   - injeta os scripts na ordem correta
+- `index.html`
+  - arquivo de entrada para deploy em raiz
+  - redireciona automaticamente para `src/index.html`
 - `styles/main.css`
   - design system (tokens), glass mode, componentes, tema claro/escuro e responsividade
 - `data/topics.js`
