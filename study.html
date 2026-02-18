@@ -151,7 +151,7 @@ body {
 .btn-green { border-color: color-mix(in srgb, var(--green) 55%, var(--border)); color: var(--green); }
 .btn-blue { border-color: color-mix(in srgb, var(--blue) 55%, var(--border)); color: var(--blue); }
 .btn-danger { border-color: color-mix(in srgb, var(--red) 55%, var(--border)); color: var(--red); }
-.btn-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.btn-row { display: flex; gap: 0.72rem; row-gap: 0.62rem; flex-wrap: wrap; }
 .phase-list { display: flex; flex-direction: column; gap: 0.35rem; }
 .phase-item {
   font-size: 0.74rem;
@@ -282,6 +282,26 @@ body {
 .list { margin-left: 1rem; display: flex; flex-direction: column; gap: 0.34rem; font-size: 0.82rem; line-height: 1.48; color: var(--list-text); }
 .small { font-size: 0.73rem; color: var(--muted); }
 .answer-input { margin-top: 0.58rem; }
+.answer-check-row {
+  display: flex;
+  align-items: center;
+  gap: 0.56rem;
+  margin-top: 0.58rem;
+}
+.answer-check-row .answer-input {
+  margin-top: 0;
+  flex: 1;
+}
+.btn-icon-check {
+  min-width: 42px;
+  width: 42px;
+  padding: 0.56rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  line-height: 1;
+}
 .mini-title {
   font-family: 'Inter', sans-serif;
   font-size: 0.62rem;
@@ -365,10 +385,120 @@ body {
 .placeholder-icon { font-size: 2.4rem; opacity: 0.42; }
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; border: 0; padding: 0; clip: rect(0 0 0 0); overflow: hidden; }
 @media(max-width: 980px) {
-  .app { grid-template-columns: 1fr; padding: 0.7rem; }
-  .sidebar { border-right: none; }
+  .app {
+    grid-template-columns: 1fr;
+    padding: 0.72rem;
+    gap: 0.72rem;
+  }
+  .app.sidebar-collapsed { grid-template-columns: 1fr; }
+  .sidebar {
+    border-right: none;
+    padding: 0.95rem;
+  }
+  .main { padding: 0.1rem; }
   .dashboard { grid-template-columns: 1fr 1fr; }
   .split { grid-template-columns: 1fr; }
+  .q-meta { flex-wrap: wrap; align-items: flex-start; }
+  .timer-overlay { padding: 0.8rem; }
+  .timer-q { max-width: 92vw; }
+}
+
+@media(max-width: 760px) {
+  .app {
+    padding: 0.52rem;
+    gap: 0.58rem;
+  }
+  .sidebar {
+    padding: 0.82rem;
+    border-radius: 14px;
+    gap: 0.8rem;
+  }
+  .app.sidebar-collapsed .collapse-hide { display: block; }
+  .app.sidebar-collapsed .logo {
+    writing-mode: horizontal-tb;
+    transform: none;
+    font-size: 0.68rem;
+  }
+  .app.sidebar-collapsed .top-actions { flex-direction: row; }
+  .app.sidebar-collapsed .sidebar {
+    align-items: stretch;
+    padding: 0.82rem;
+  }
+  .sidebar-title { font-size: 1.12rem; }
+  .sidebar-sub { font-size: 0.72rem; }
+  .sidebar .btn-row .btn { flex: 1 1 calc(50% - 0.36rem); }
+  .dashboard { grid-template-columns: 1fr; }
+  .dash-card { padding: 0.72rem; }
+  .card { padding: 0.84rem; }
+  .phase-name { font-size: 1.36rem; }
+  .phase-desc { font-size: 0.78rem; }
+  .q-text { font-size: 0.95rem; line-height: 1.58; }
+  .q-hint { font-size: 0.72rem; }
+  .btn {
+    font-size: 0.68rem;
+    padding: 0.56rem 0.72rem;
+  }
+  .btn-icon-check {
+    width: 40px;
+    min-width: 40px;
+    padding: 0.52rem;
+  }
+  .answer-check-row { gap: 0.45rem; }
+  .timer-circle {
+    width: 146px;
+    height: 146px;
+  }
+  .timer-num { font-size: 2.4rem; }
+  .timer-q { font-size: 0.84rem; }
+}
+
+@media(max-width: 520px) {
+  body {
+    background: var(--bg);
+  }
+  .app {
+    padding: 0.42rem;
+    gap: 0.5rem;
+  }
+  .sidebar {
+    padding: 0.72rem;
+    border-radius: 12px;
+  }
+  .sidebar-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.45rem;
+  }
+  .top-actions { align-self: flex-end; }
+  .sidebar .btn-row .btn { flex: 1 1 100%; }
+  .field-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+  }
+  .select, .topic-input, .textarea {
+    font-size: 0.8rem;
+    padding: 0.56rem 0.64rem;
+  }
+  .phase-number { font-size: 0.56rem; }
+  .phase-name { font-size: 1.24rem; }
+  .q-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+  .q-tag, .badge {
+    font-size: 0.52rem;
+    padding: 0.2rem 0.52rem;
+  }
+  .q-text { font-size: 0.92rem; }
+  .list { font-size: 0.76rem; }
+  .btn-row { gap: 0.52rem; }
+  .timer-circle {
+    width: 132px;
+    height: 132px;
+  }
+  .timer-num { font-size: 2.1rem; }
+  .timer-label { font-size: 0.52rem; }
 }
 </style>
 </head>
@@ -969,7 +1099,30 @@ function renderQuestionCard(q, idx) {
       <p class="q-text">${renderedText}</p>
       ${showHint ? `<p class="q-hint">${q.hint}</p>` : ""}
 
-      <div class="split">
+      <div class="stack">
+        <section class="card" style="padding:0.7rem">
+          <p class="mini-title">Grammar focus</p>
+          <p class="small">${q.grammarFocus}</p>
+          <p style="margin-top:0.4rem;font-size:0.78rem">${grammar.prompt}</p>
+          <div class="answer-check-row">
+            <input class="topic-input answer-input" type="text" id="grammar-${q.id}" placeholder="Digite sua resposta">
+            <button class="btn btn-green btn-icon-check js-check-grammar" type="button" aria-label="Verificar resposta do grammar focus" title="Verificar" data-question-id="${q.id}" data-answer="${escapeHtmlAttr(serializeAnswers(grammar.answers))}" data-sentence="${escapeHtmlAttr(grammar.prompt)}" onclick="checkGrammarFromButton(this)">🔍</button>
+          </div>
+          <div id="grammar-feedback-${q.id}" class="check-feedback" aria-live="polite"></div>
+        </section>
+
+        <section class="card" style="padding:0.7rem">
+          <p class="mini-title">Fill in the blank</p>
+          <p style="font-size:0.8rem">${fillEx.sentence}</p>
+          <div class="answer-check-row">
+            <input class="topic-input answer-input" type="text" id="fill-${q.id}" placeholder="Palavra faltando">
+            <button class="btn btn-green btn-icon-check js-check-fill" type="button" aria-label="Verificar resposta do fill in the blank" title="Verificar" data-question-id="${q.id}" data-answer="${escapeHtmlAttr(serializeAnswers(fillEx.answers))}" data-sentence="${escapeHtmlAttr(fillEx.sentence)}" onclick="checkFillFromButton(this)">🔍</button>
+          </div>
+          <div id="fill-feedback-${q.id}" class="check-feedback" aria-live="polite"></div>
+        </section>
+      </div>
+
+      <div class="split" style="margin-top:0.8rem">
         <div class="stack">
           <section class="card" style="padding:0.7rem">
             <p class="mini-title">Useful expressions</p>
@@ -977,29 +1130,12 @@ function renderQuestionCard(q, idx) {
           </section>
 
           <section class="card" style="padding:0.7rem">
-            <p class="mini-title">Grammar focus</p>
-            <p class="small">${q.grammarFocus}</p>
-            <p style="margin-top:0.4rem;font-size:0.78rem">${grammar.prompt}</p>
-            <input class="topic-input answer-input" type="text" id="grammar-${q.id}" placeholder="Digite sua resposta">
-            <button class="btn btn-green js-check-grammar" type="button" data-question-id="${q.id}" data-answer="${escapeHtmlAttr(serializeAnswers(grammar.answers))}" data-sentence="${escapeHtmlAttr(grammar.prompt)}" onclick="checkGrammarFromButton(this)">Checar</button>
-            <div id="grammar-feedback-${q.id}" class="check-feedback" aria-live="polite"></div>
-          </section>
-
-          <section class="card" style="padding:0.7rem">
-            <p class="mini-title">Fill in the blank</p>
-            <p style="font-size:0.8rem">${fillEx.sentence}</p>
-            <input class="topic-input answer-input" type="text" id="fill-${q.id}" placeholder="Palavra faltando">
-            <button class="btn btn-green js-check-fill" type="button" data-question-id="${q.id}" data-answer="${escapeHtmlAttr(serializeAnswers(fillEx.answers))}" data-sentence="${escapeHtmlAttr(fillEx.sentence)}" onclick="checkFillFromButton(this)">Checar</button>
-            <div id="fill-feedback-${q.id}" class="check-feedback" aria-live="polite"></div>
+            <p class="mini-title">Role-play scenario</p>
+            <p style="font-size:0.8rem;line-height:1.5">${rolePlay}</p>
           </section>
         </div>
 
         <div class="stack">
-          <section class="card" style="padding:0.7rem">
-            <p class="mini-title">Role-play scenario</p>
-            <p style="font-size:0.8rem;line-height:1.5">${rolePlay}</p>
-          </section>
-
           <section class="card" style="padding:0.7rem">
             <p class="mini-title">Notas e feedback</p>
             <textarea class="textarea" rows="5" id="note-${q.id}" placeholder="Anote correções, vocabulário novo e feedback">${noteVal}</textarea>
