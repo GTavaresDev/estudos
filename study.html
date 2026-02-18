@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Conversation Practice</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<title>English Coach Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #0e0e0e;
@@ -17,592 +17,1339 @@
   --green: #5fcf80;
   --red: #e05c5c;
   --blue: #5b9cf6;
+  --input-bg: #111;
+  --track-bg: #242424;
+  --list-text: #d6d6d6;
+  --hint-text: #909090;
+  --overlay-bg: rgba(0, 0, 0, 0.85);
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--bg); color:var(--text); font-family:'Lora',serif; min-height:100vh; }
-
-/* Layout */
-.app { display:grid; grid-template-columns:260px 1fr; min-height:100vh; }
-
-/* Sidebar */
+body.light-mode {
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --border: #dbe2ee;
+  --text: #1d2430;
+  --muted: #5f6b7d;
+  --accent: #c08b00;
+  --green: #2f9e63;
+  --red: #d64545;
+  --blue: #2f79d1;
+  --input-bg: #f8fafd;
+  --track-bg: #e7edf6;
+  --list-text: #2b3340;
+  --hint-text: #4d596d;
+  --overlay-bg: rgba(18, 27, 40, 0.58);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+.app { display: grid; grid-template-columns: 320px 1fr; min-height: 100vh; }
+.app.sidebar-collapsed { grid-template-columns: 72px 1fr; }
 .sidebar {
-  background:var(--surface);
-  border-right:1px solid var(--border);
-  padding:1.5rem 1.2rem;
-  display:flex; flex-direction:column; gap:1.5rem;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 .logo {
-  font-family:'Syne',sans-serif;
-  font-size:0.7rem;
-  letter-spacing:0.25em;
-  text-transform:uppercase;
-  color:var(--accent);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
-.sidebar-title {
-  font-family:'Syne',sans-serif;
-  font-size:1.3rem;
-  font-weight:800;
-  line-height:1.2;
+.sidebar-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.7rem; }
+.top-actions { display: flex; gap: 0.35rem; }
+.sidebar-title { font-family: 'Inter', sans-serif; font-size: 1.35rem; font-weight: 700; line-height: 1.2; }
+.sidebar-sub { color: var(--muted); font-size: 0.75rem; margin-top: 0.3rem; }
+.collapse-btn, .theme-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
 }
-.topic-input-wrap { display:flex; flex-direction:column; gap:0.5rem; }
-.topic-label { font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); font-family:'Syne',sans-serif; }
-.topic-input {
-  background:#111;
-  border:1px solid var(--border);
-  border-radius:4px;
-  color:var(--text);
-  font-family:'Lora',serif;
-  font-size:0.85rem;
-  padding:0.6rem 0.8rem;
-  width:100%;
-  outline:none;
-  transition:border-color 0.2s;
+.collapse-btn:hover, .theme-btn:hover { color: var(--text); border-color: #666; }
+.field-wrap { display: flex; flex-direction: column; gap: 0.4rem; }
+.field-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-family: 'Inter', sans-serif;
 }
-.topic-input:focus { border-color:var(--accent); }
-.topic-input::placeholder { color:#555; }
-
-.generate-btn {
-  background:var(--accent);
-  color:#000;
-  border:none;
-  border-radius:4px;
-  padding:0.65rem;
-  font-family:'Syne',sans-serif;
-  font-size:0.8rem;
-  font-weight:700;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  cursor:pointer;
-  width:100%;
-  transition:opacity 0.15s;
+.select, .topic-input, .textarea {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  padding: 0.55rem 0.7rem;
+  width: 100%;
+  outline: none;
 }
-.generate-btn:hover { opacity:0.85; }
-
-.phase-list { display:flex; flex-direction:column; gap:0.3rem; }
+.select:focus, .topic-input:focus, .textarea:focus { border-color: var(--accent); }
+.btn {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.55rem 0.7rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.btn:hover { border-color: #666; color: var(--text); }
+.btn-primary { background: var(--accent); color: #000; border-color: var(--accent); }
+.btn-green { border-color: var(--green); color: var(--green); }
+.btn-blue { border-color: var(--blue); color: var(--blue); }
+.btn-danger { border-color: var(--red); color: var(--red); }
+.btn-row { display: flex; gap: 0.45rem; flex-wrap: wrap; }
+.phase-list { display: flex; flex-direction: column; gap: 0.25rem; }
 .phase-item {
-  font-size:0.72rem;
-  padding:0.5rem 0.7rem;
-  border-radius:3px;
-  color:var(--muted);
-  font-family:'Syne',sans-serif;
-  cursor:pointer;
-  display:flex; align-items:center; gap:0.5rem;
-  transition:all 0.15s;
+  font-size: 0.72rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 3px;
+  color: var(--muted);
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
 }
-.phase-item.active { background:rgba(232,197,71,0.12); color:var(--accent); }
-.phase-item.done { color:var(--green); }
-.phase-dot {
-  width:6px; height:6px; border-radius:50%;
-  background:currentColor; flex-shrink:0;
-}
-
+.phase-item.active { background: rgba(232, 197, 71, 0.12); color: var(--accent); }
+.phase-item.done { color: var(--green); }
+.phase-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .tip-box {
-  margin-top:auto;
-  border:1px solid var(--border);
-  border-radius:4px;
-  padding:0.8rem;
-  font-size:0.7rem;
-  line-height:1.6;
-  color:var(--muted);
+  margin-top: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.7rem;
+  font-size: 0.68rem;
+  line-height: 1.55;
+  color: var(--muted);
 }
-.tip-box strong { color:var(--text); display:block; margin-bottom:0.3rem; font-family:'Syne',sans-serif; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; }
-
-/* Main */
-.main { padding:2rem; overflow-y:auto; display:flex; flex-direction:column; gap:2rem; }
-
-.phase-header {
-  border-bottom:1px solid var(--border);
-  padding-bottom:1rem;
+.tip-box strong {
+  color: var(--text);
+  display: block;
+  margin-bottom: 0.35rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.63rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
+.main { padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(130px, 1fr));
+  gap: 0.7rem;
+}
+.dash-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.7rem;
+}
+.dash-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.dash-value { font-family: 'Inter', sans-serif; font-size: 1.35rem; color: var(--green); margin-top: 0.2rem; font-weight: 700; }
+.dash-sub { font-size: 0.7rem; color: var(--muted); margin-top: 0.2rem; }
+.phase-header { border-bottom: 1px solid var(--border); padding-bottom: 0.8rem; }
 .phase-number {
-  font-family:'Syne',sans-serif;
-  font-size:0.62rem;
-  letter-spacing:0.25em;
-  text-transform:uppercase;
-  color:var(--accent);
-  margin-bottom:0.3rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
-.phase-name {
-  font-family:'Syne',sans-serif;
-  font-size:1.8rem;
-  font-weight:800;
+.phase-name { font-family: 'Inter', sans-serif; font-size: 1.6rem; font-weight: 700; margin-top: 0.25rem; }
+.phase-desc { font-size: 0.82rem; color: var(--muted); margin-top: 0.3rem; font-style: italic; }
+.stack { display: flex; flex-direction: column; gap: 0.8rem; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.95rem 1rem;
 }
-.phase-desc {
-  font-size:0.82rem;
-  color:var(--muted);
-  margin-top:0.4rem;
-  font-style:italic;
+.question-card.answered { border-left: 3px solid var(--green); }
+.q-meta { display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; margin-bottom: 0.6rem; }
+.q-tag, .badge {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  color: var(--muted);
 }
-
-/* Question cards */
-.questions-grid { display:flex; flex-direction:column; gap:1rem; }
-
-.q-card {
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:6px;
-  padding:1.2rem 1.4rem;
-  position:relative;
-  transition:border-color 0.2s;
+.badge.level-beginner { border-color: #6fbf73; color: #6fbf73; }
+.badge.level-intermediate { border-color: #5b9cf6; color: #5b9cf6; }
+.badge.level-advanced { border-color: #d77af4; color: #d77af4; }
+.q-tag.speaking { border-color: #5b9cf680; color: var(--blue); }
+.q-tag.listening { border-color: #5fcf8080; color: var(--green); }
+.q-tag.extended { border-color: #e8c54780; color: var(--accent); }
+.q-text { font-size: 1rem; line-height: 1.6; margin-bottom: 0.65rem; font-family: 'Lora', serif; }
+.q-hint { font-size: 0.74rem; color: var(--hint-text); line-height: 1.55; margin-bottom: 0.8rem; }
+.blank-topic {
+  background: rgba(232, 197, 71, 0.12);
+  border-bottom: 2px solid var(--accent);
+  color: var(--accent);
+  border-radius: 2px 2px 0 0;
+  padding: 0 0.3rem;
 }
-.q-card:hover { border-color:#444; }
-.q-card.answered { border-left:3px solid var(--green); }
-
-.q-meta {
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:0.7rem;
+.split {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 0.8rem;
 }
-.q-tag {
-  font-family:'Syne',sans-serif;
-  font-size:0.58rem;
-  letter-spacing:0.2em;
-  text-transform:uppercase;
-  padding:0.25rem 0.6rem;
-  border-radius:20px;
-  border:1px solid var(--border);
-  color:var(--muted);
+.list { margin-left: 1rem; display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.8rem; line-height: 1.45; color: var(--list-text); }
+.small { font-size: 0.72rem; color: var(--muted); }
+.answer-input { margin-top: 0.55rem; }
+.mini-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
 }
-.q-tag.speaking { border-color:#5b9cf680; color:var(--blue); }
-.q-tag.listening { border-color:#5fcf8080; color:var(--green); }
-.q-tag.extended { border-color:#e8c54780; color:var(--accent); }
-
-.q-number {
-  font-family:'Syne',sans-serif;
-  font-size:0.65rem;
-  color:#444;
+.check-feedback {
+  display: none;
+  margin-top: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  font-size: 0.76rem;
+  line-height: 1.45;
+  white-space: pre-line;
 }
-
-.q-text {
-  font-size:1.05rem;
-  line-height:1.65;
-  margin-bottom:1rem;
+.check-feedback.success {
+  border-color: color-mix(in srgb, var(--green) 65%, var(--border));
+  color: var(--green);
+  background: color-mix(in srgb, var(--green) 10%, transparent);
 }
-
-.q-text .blank {
-  display:inline-block;
-  background:rgba(232,197,71,0.15);
-  border-bottom:2px solid var(--accent);
-  padding:0 0.4rem;
-  min-width:80px;
-  color:var(--accent);
-  font-style:italic;
-  border-radius:2px 2px 0 0;
+.check-feedback.error {
+  border-color: color-mix(in srgb, var(--red) 65%, var(--border));
+  color: var(--red);
+  background: color-mix(in srgb, var(--red) 10%, transparent);
 }
-
-.q-hint {
-  font-size:0.72rem;
-  color:#555;
-  font-style:italic;
-  margin-bottom:1rem;
-  padding-left:0.8rem;
-  border-left:2px solid #333;
-  line-height:1.5;
-}
-
-.q-actions { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; }
-
-.btn-sm {
-  font-family:'Syne',sans-serif;
-  font-size:0.62rem;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  padding:0.4rem 0.8rem;
-  border-radius:3px;
-  border:1px solid var(--border);
-  background:transparent;
-  color:var(--muted);
-  cursor:pointer;
-  transition:all 0.15s;
-}
-.btn-sm:hover { border-color:#666; color:var(--text); }
-.btn-sm.primary { border-color:var(--green); color:var(--green); }
-.btn-sm.primary:hover { background:rgba(95,207,128,0.1); }
-.btn-sm.danger { border-color:var(--red); color:var(--red); }
-
-.timer-badge {
-  margin-left:auto;
-  font-family:'Syne',sans-serif;
-  font-size:0.7rem;
-  color:var(--accent);
-  background:rgba(232,197,71,0.1);
-  padding:0.25rem 0.6rem;
-  border-radius:3px;
-}
-
-/* Timer modal */
+.app.sidebar-collapsed .collapse-hide { display: none; }
+.app.sidebar-collapsed .sidebar { padding: 0.8rem 0.45rem; align-items: center; }
+.app.sidebar-collapsed .sidebar-top { width: 100%; justify-content: center; }
+.app.sidebar-collapsed .logo { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 0.62rem; }
+.app.sidebar-collapsed .top-actions { flex-direction: column; }
 .timer-overlay {
-  display:none;
-  position:fixed; inset:0;
-  background:rgba(0,0,0,0.85);
-  z-index:100;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  gap:1.5rem;
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-bg);
+  z-index: 120;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
 }
-.timer-overlay.active { display:flex; }
+.timer-overlay.active { display: flex; }
 .timer-circle {
-  width:160px; height:160px;
-  border-radius:50%;
-  border:3px solid var(--accent);
-  display:flex; align-items:center; justify-content:center;
-  flex-direction:column;
-  font-family:'Syne',sans-serif;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
 }
-.timer-num { font-size:3rem; font-weight:800; color:var(--accent); line-height:1; }
-.timer-label { font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); }
-.timer-q { max-width:480px; text-align:center; font-style:italic; font-size:1rem; line-height:1.6; color:var(--muted); padding:0 1rem; }
-.timer-close {
-  font-family:'Syne',sans-serif;
-  font-size:0.7rem;
-  letter-spacing:0.15em;
-  text-transform:uppercase;
-  background:transparent;
-  border:1px solid var(--border);
-  color:var(--muted);
-  padding:0.5rem 1.2rem;
-  border-radius:3px;
-  cursor:pointer;
-}
-
-/* Placeholder state */
+.timer-num { font-size: 2.8rem; font-weight: 800; color: var(--accent); line-height: 1; }
+.timer-label { font-size: 0.58rem; color: var(--muted); letter-spacing: 0.2em; text-transform: uppercase; }
+.timer-q { max-width: 560px; text-align: center; color: var(--muted); font-size: 0.88rem; line-height: 1.55; }
+.history-list { font-size: 0.74rem; color: var(--muted); display: flex; flex-direction: column; gap: 0.28rem; }
+.bar-track { width: 100%; height: 6px; background: var(--track-bg); border-radius: 999px; overflow: hidden; }
+.bar-fill { height: 100%; background: var(--green); }
 .placeholder {
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  min-height:50vh; text-align:center; gap:1rem;
-  color:var(--muted);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 50vh; text-align: center; gap: 0.9rem; color: var(--muted);
 }
-.placeholder-icon { font-size:2.5rem; opacity:0.3; }
-.placeholder-text { font-size:0.85rem; max-width:300px; line-height:1.6; }
-
-/* Score bar */
-.score-bar {
-  display:flex; align-items:center; gap:1rem;
-  padding:0.8rem 1rem;
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:6px;
-  font-family:'Syne',sans-serif;
-  font-size:0.7rem;
-}
-.score-num { font-size:1.4rem; font-weight:800; color:var(--green); }
-.score-total { color:var(--muted); }
-.score-label { font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); }
-
-@media(max-width:640px) {
-  .app { grid-template-columns:1fr; }
-  .sidebar { border-right:none; border-bottom:1px solid var(--border); }
+.placeholder-icon { font-size: 2.2rem; opacity: 0.3; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; border: 0; padding: 0; clip: rect(0 0 0 0); overflow: hidden; }
+@media(max-width: 980px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+  .dashboard { grid-template-columns: 1fr 1fr; }
+  .split { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 <div class="app">
-
-  <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div>
-      <p class="logo">English Practice</p>
-      <h1 class="sidebar-title">Conversation<br>Drill</h1>
-    </div>
-
-    <div class="topic-input-wrap">
-      <label class="topic-label">Assunto da aula</label>
-      <input class="topic-input" id="topicInput" placeholder="ex: artificial intelligence" maxlength="40">
-      <button class="generate-btn" onclick="generateLesson()">▶ Gerar aula</button>
-    </div>
-
-    <div>
-      <p class="topic-label" style="margin-bottom:0.6rem">Fases</p>
-      <div class="phase-list" id="phaseList">
-        <div class="phase-item" onclick="goToPhase(0)"><span class="phase-dot"></span>Warm-up</div>
-        <div class="phase-item" onclick="goToPhase(1)"><span class="phase-dot"></span>Opinion & argument</div>
-        <div class="phase-item" onclick="goToPhase(2)"><span class="phase-dot"></span>Deep dive</div>
-        <div class="phase-item" onclick="goToPhase(3)"><span class="phase-dot"></span>Long listening</div>
-        <div class="phase-item" onclick="goToPhase(4)"><span class="phase-dot"></span>Wrap-up</div>
+    <div class="sidebar-top">
+      <div>
+        <p class="logo">English Practice</p>
+        <h1 class="sidebar-title collapse-hide">English Coach<br>Studio</h1>
+        <p class="sidebar-sub collapse-hide">Conversas reais para aula, autoestudo e treino guiado.</p>
+      </div>
+      <div class="top-actions">
+        <button class="theme-btn" id="themeToggleBtn" type="button" aria-label="Ativar modo branco" title="Ativar modo branco">☀</button>
+        <button class="collapse-btn" id="sidebarToggleBtn" type="button" aria-label="Contrair sidebar" title="Contrair sidebar">◀</button>
       </div>
     </div>
 
-    <div class="tip-box">
-      <strong>Como usar</strong>
-      Digite o assunto, clique em "Gerar aula". Nas perguntas, o <span style="color:var(--accent)">campo amarelo</span> já vem preenchido com o seu tema. Use o timer para se forçar a falar sem parar.
+    <div class="field-wrap collapse-hide">
+      <label class="field-label" for="levelSelect">Nível</label>
+      <select class="select" id="levelSelect" aria-label="Selecionar nível">
+        <option value="beginner">Beginner</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="advanced">Advanced</option>
+      </select>
+    </div>
+
+    <div class="field-wrap collapse-hide">
+      <label class="field-label" for="modeSelect">Modo de estudo</label>
+      <select class="select" id="modeSelect" aria-label="Selecionar modo">
+        <option value="lesson">Lesson</option>
+        <option value="practice">Practice</option>
+        <option value="selfstudy">Self-Study</option>
+      </select>
+    </div>
+
+    <div class="field-wrap collapse-hide">
+      <label class="field-label" for="categorySelect">Categoria</label>
+      <select class="select" id="categorySelect" aria-label="Selecionar categoria"></select>
+    </div>
+
+    <div class="field-wrap collapse-hide">
+      <label class="field-label" for="topicSelect">Tópico</label>
+      <select class="select" id="topicSelect" aria-label="Selecionar tópico"></select>
+      <input class="topic-input" id="customTopicInput" placeholder="Ou escreva um tópico customizado (opcional)" maxlength="50" aria-label="Tópico customizado">
+    </div>
+
+    <div class="btn-row collapse-hide">
+      <button class="btn btn-primary" id="generateBtn" type="button">Gerar aula</button>
+      <button class="btn btn-blue" id="randomBtn" type="button">Modo aleatório</button>
+      <button class="btn" id="exportBtn" type="button">Exportar relatório</button>
+    </div>
+
+    <div class="collapse-hide" style="width:100%">
+      <p class="field-label" style="margin-bottom:0.45rem">Fases</p>
+      <div class="phase-list" id="phaseList"></div>
+    </div>
+
+    <div class="tip-box collapse-hide">
+      <strong>Atalhos</strong>
+      <div>Alt+G: gerar aula<br>Alt+N: próxima fase<br>Alt+P: fase anterior</div>
+      <div style="margin-top:0.4rem">Use os favoritos para montar listas pessoais.</div>
     </div>
   </aside>
 
-  <!-- MAIN -->
   <main class="main" id="mainArea">
     <div class="placeholder">
       <div class="placeholder-icon">💬</div>
-      <p class="placeholder-text">Digite um assunto ao lado e clique em <strong>"Gerar aula"</strong> para montar sua sessão de conversação.</p>
-      <p class="placeholder-text" style="font-size:0.72rem;opacity:0.6">Exemplos: <em>social media, climate change, remote work, technology, travel, food culture…</em></p>
+      <p>Escolha nível, categoria e tópico. Depois clique em <strong>"Gerar aula"</strong>.</p>
+      <p class="small">Você terá perguntas prontas, exercícios práticos, vocabulário e espaço de feedback.</p>
     </div>
   </main>
 </div>
 
-<!-- TIMER OVERLAY -->
-<div class="timer-overlay" id="timerOverlay">
+<div class="timer-overlay" id="timerOverlay" aria-live="polite">
   <div class="timer-circle">
     <span class="timer-num" id="timerNum">60</span>
     <span class="timer-label">segundos</span>
   </div>
   <p class="timer-q" id="timerQ"></p>
-  <button class="timer-close" onclick="closeTimer()">✕ Fechar</button>
+  <div class="btn-row">
+    <button class="btn btn-green" id="pauseTimerBtn" type="button">Pausar</button>
+    <button class="btn btn-blue" id="resumeTimerBtn" type="button">Retomar</button>
+    <button class="btn btn-danger" id="closeTimerBtn" type="button">Fechar</button>
+  </div>
 </div>
 
 <script>
-const phases = [
+const PHASES = [
+  { id: "warm-up", name: "Warm-up", desc: "Ativação de vocabulário e confiança." },
+  { id: "opinion", name: "Opinion & Argument", desc: "Defender ponto de vista de forma prática." },
+  { id: "deep-dive", name: "Deep Dive", desc: "Explorar situações reais com mais profundidade." },
+  { id: "listening", name: "Long Listening", desc: "Escuta ativa e follow-up natural." },
+  { id: "wrap-up", name: "Wrap-up", desc: "Síntese, reflexão e próximos passos." }
+];
+
+const LEVELS = {
+  beginner: { label: "Beginner", minTime: 30, maxTime: 60, complexity: "simple" },
+  intermediate: { label: "Intermediate", minTime: 45, maxTime: 90, complexity: "moderate" },
+  advanced: { label: "Advanced", minTime: 60, maxTime: 120, complexity: "complex" }
+};
+
+const TOPIC_CATALOG = [
   {
-    name: "Warm-up",
-    desc: "Quebre o gelo — frases curtas, sem pressão. Objetivo: soltar a língua.",
-    questions: [
+    id: "daily-life",
+    label: "Daily Life",
+    topics: [
       {
-        text: `What do you already know about <span class="blank" id="b0"></span>?`,
-        hint: "Resposta alvo: 3–5 frases. Não pense muito — fale o que vier. Objetivo: ativar vocabulário que você já tem.",
-        tag: "speaking",
-        time: 45
+        id: "morning-routine",
+        label: "Morning Routine",
+        description: "hábitos, tempo e produtividade",
+        vocabulary: [
+          { word: "wake up", meaning: "acordar", example: "I wake up at 6:30 on weekdays." },
+          { word: "commute", meaning: "deslocamento casa-trabalho", example: "My commute takes about 40 minutes." },
+          { word: "get ready", meaning: "se arrumar", example: "I get ready quickly before work." }
+        ],
+        pronunciationTips: ["wake /weik/", "ready /redi/", "commute /kemiut/"],
+        rolePlays: [
+          "Você explica sua rotina para um novo colega estrangeiro.",
+          "Você ajuda um turista a organizar uma manhã produtiva na cidade."
+        ]
       },
       {
-        text: `When was the first time you heard about <span class="blank" id="b1"></span>?`,
-        hint: "Conte uma mini-história. Use past tenses naturalmente.",
-        tag: "speaking",
-        time: 45
-      },
-      {
-        text: `If you had to describe <span class="blank" id="b2"></span> to a child in two sentences, what would you say?`,
-        hint: "Exercício de síntese — obriga você a usar linguagem simples e direta.",
-        tag: "speaking",
-        time: 60
+        id: "shopping",
+        label: "Shopping",
+        description: "compras, preços e atendimento",
+        vocabulary: [
+          { word: "receipt", meaning: "nota fiscal", example: "Could I have the receipt, please?" },
+          { word: "on sale", meaning: "em promoção", example: "This jacket is on sale today." },
+          { word: "try on", meaning: "experimentar roupa", example: "Can I try on this shirt?" }
+        ],
+        pronunciationTips: ["receipt /risit/", "sale /seil/", "size /saiz/"],
+        rolePlays: [
+          "Você é cliente e pede troca de produto no balcão.",
+          "Você é atendente e sugere opções para o cliente."
+        ]
       }
     ]
   },
   {
-    name: "Opinion & Argument",
-    desc: "Dê opiniões e defenda-as por pelo menos 60 segundos seguidos.",
-    questions: [
+    id: "work",
+    label: "Work & Career",
+    topics: [
       {
-        text: `What do you think about <span class="blank"></span>? Do you have a strong opinion on it?`,
-        hint: "Use: 'I strongly believe…', 'From my perspective…', 'What strikes me most is…'. Meta: não pare antes de 60 segundos.",
-        tag: "extended",
-        time: 60
+        id: "job-interview",
+        label: "Job Interview",
+        description: "entrevista, experiência e objetivos",
+        vocabulary: [
+          { word: "strengths", meaning: "pontos fortes", example: "My strengths are communication and problem-solving." },
+          { word: "deadline", meaning: "prazo final", example: "I always meet deadlines." },
+          { word: "teamwork", meaning: "trabalho em equipe", example: "Teamwork is essential in my role." }
+        ],
+        pronunciationTips: ["strength /strengf/", "deadline /dedlain/", "career /kerier/"],
+        rolePlays: [
+          "Você responde perguntas de uma entrevista de emprego.",
+          "Você é recrutador e faz perguntas comportamentais."
+        ]
       },
       {
-        text: `What are the biggest advantages and disadvantages of <span class="blank"></span>?`,
-        hint: "Estruture assim: 'On one hand… On the other hand… However, I think that…'",
-        tag: "extended",
-        time: 75
-      },
-      {
-        text: `Do you think <span class="blank"></span> has changed in the last 10 years? How?`,
-        hint: "Compare passado e presente. Use: 'used to', 'whereas', 'has become', 'dramatically shifted'.",
-        tag: "speaking",
-        time: 60
-      },
-      {
-        text: `If you could change one thing about <span class="blank"></span>, what would it be and why?`,
-        hint: "Hipótese + justificativa. 'If I could… I would… because… This would lead to…'",
-        tag: "extended",
-        time: 75
+        id: "meetings",
+        label: "Meetings",
+        description: "reuniões, alinhamento e decisão",
+        vocabulary: [
+          { word: "agenda", meaning: "pauta", example: "Let's review today's agenda." },
+          { word: "action items", meaning: "itens de ação", example: "Can we define action items?" },
+          { word: "follow up", meaning: "dar continuidade", example: "I'll follow up tomorrow." }
+        ],
+        pronunciationTips: ["agenda /adjenda/", "follow up /falo ap/", "align /alain/"],
+        rolePlays: [
+          "Você lidera uma reunião de status do projeto.",
+          "Você participa da reunião e pede esclarecimentos."
+        ]
       }
     ]
   },
   {
-    name: "Deep Dive",
-    desc: "Perguntas mais complexas — respostas longas esperadas. Este é o core da aula.",
-    questions: [
+    id: "travel",
+    label: "Travel & Culture",
+    topics: [
       {
-        text: `How does <span class="blank"></span> affect people's daily lives? Give specific examples.`,
-        hint: "Cite pelo menos 2 exemplos concretos. Use: 'For instance…', 'A clear example of this is…', 'Take the case of…'",
-        tag: "extended",
-        time: 90
+        id: "airport",
+        label: "Airport",
+        description: "check-in, embarque e conexão",
+        vocabulary: [
+          { word: "boarding pass", meaning: "cartão de embarque", example: "Where can I print my boarding pass?" },
+          { word: "luggage", meaning: "bagagem", example: "My luggage is overweight." },
+          { word: "departure gate", meaning: "portão de embarque", example: "What time does the gate open?" }
+        ],
+        pronunciationTips: ["boarding /bording/", "luggage /lagadj/", "gate /gueit/"],
+        rolePlays: [
+          "Você pede ajuda no balcão porque perdeu a conexão.",
+          "Você trabalha no aeroporto e orienta passageiros."
+        ]
       },
       {
-        text: `What kind of person is most interested in <span class="blank"></span>, and why do you think that is?`,
-        hint: "Exercício de análise de público/perfil. Desenvolva o raciocínio — não dê só uma resposta de 1 frase.",
-        tag: "extended",
-        time: 90
-      },
-      {
-        text: `If <span class="blank"></span> didn't exist, what would the world look like?`,
-        hint: "Hipótese contrafactual — exige raciocínio em cadeia. 'Without it… we would… which means… and consequently…'",
-        tag: "extended",
-        time: 90
-      },
-      {
-        text: `What's a common misconception people have about <span class="blank"></span>?`,
-        hint: "Ótima para praticar argumentação. Estruture: 'Many people think… but in reality… The truth is…'",
-        tag: "speaking",
-        time: 75
+        id: "hotel",
+        label: "Hotel",
+        description: "reserva, check-in e solicitações",
+        vocabulary: [
+          { word: "reservation", meaning: "reserva", example: "I have a reservation under Silva." },
+          { word: "single room", meaning: "quarto individual", example: "Do you have a single room available?" },
+          { word: "checkout", meaning: "saída do hotel", example: "What time is checkout?" }
+        ],
+        pronunciationTips: ["reservation /rezervexan/", "available /aveilabol/", "checkout /tchekaut/"],
+        rolePlays: [
+          "Você faz check-in e solicita quarto silencioso.",
+          "Você é recepcionista e resolve um problema de reserva."
+        ]
       }
     ]
   },
   {
-    name: "Long Listening",
-    desc: "Agora VOCÊ ouve. Seu parceiro fala por 90s–2min sobre o tema. Você escuta, toma nota mental e responde.",
-    questions: [
+    id: "technology",
+    label: "Technology",
+    topics: [
       {
-        text: `Ask your partner: "Can you tell me everything you know about <span class="blank"></span> without stopping for 90 seconds?"`,
-        hint: "🎧 Ouça com atenção. Quando terminar, resuma em voz alta o que entendeu — sem ler, só da memória.",
-        tag: "listening",
-        time: 120
+        id: "social-media",
+        label: "Social Media",
+        description: "uso, impacto e hábitos digitais",
+        vocabulary: [
+          { word: "feed", meaning: "feed de conteúdo", example: "My feed is full of short videos." },
+          { word: "scroll", meaning: "rolar a tela", example: "I scroll for too long at night." },
+          { word: "privacy", meaning: "privacidade", example: "Privacy settings are important." }
+        ],
+        pronunciationTips: ["privacy /praivasi/", "scroll /skroul/", "screen time /skrin taim/"],
+        rolePlays: [
+          "Você debate tempo de tela com um amigo.",
+          "Você apresenta regras de uso digital para adolescentes."
+        ]
       },
       {
-        text: `Ask your partner: "What's your personal story or experience with <span class="blank"></span>?"`,
-        hint: "🎧 Escute ativamente. Depois, faça 2 perguntas de follow-up baseadas no que ouviu. Ex: 'You mentioned X — could you expand on that?'",
-        tag: "listening",
-        time: 120
-      },
-      {
-        text: `Ask your partner: "Can you argue against <span class="blank"></span> for one minute, even if you actually support it?"`,
-        hint: "🎧 Exercício de devil's advocate. Ouça e depois concorde ou refute cada ponto levantado.",
-        tag: "listening",
-        time: 90
+        id: "ai-tools",
+        label: "AI Tools",
+        description: "produtividade, ética e automação",
+        vocabulary: [
+          { word: "prompt", meaning: "comando para IA", example: "A clear prompt gives better results." },
+          { word: "bias", meaning: "viés", example: "AI systems may show bias." },
+          { word: "automation", meaning: "automação", example: "Automation saves time in repetitive tasks." }
+        ],
+        pronunciationTips: ["bias /baias/", "automation /otomeixon/", "tool /tuul/"],
+        rolePlays: [
+          "Você convence seu time a testar uma ferramenta de IA.",
+          "Você discute riscos éticos da IA com um colega."
+        ]
       }
     ]
   },
   {
-    name: "Wrap-up",
-    desc: "Consolide o que foi falado. Síntese e reflexão.",
-    questions: [
+    id: "health",
+    label: "Health & Wellness",
+    topics: [
       {
-        text: `What's the most interesting thing that came up in our conversation about <span class="blank"></span>?`,
-        hint: "Síntese livre. Ótimo para ver se você reteve os pontos principais da conversa.",
-        tag: "speaking",
-        time: 60
+        id: "exercise",
+        label: "Exercise",
+        description: "treino, energia e rotina",
+        vocabulary: [
+          { word: "workout", meaning: "treino", example: "I do a short workout every morning." },
+          { word: "stretch", meaning: "alongar", example: "Don't forget to stretch after running." },
+          { word: "stamina", meaning: "resistência", example: "My stamina improved a lot." }
+        ],
+        pronunciationTips: ["workout /uerkaut/", "stretch /stretch/", "stamina /stamina/"],
+        rolePlays: [
+          "Você pede recomendações de treino para iniciantes.",
+          "Você orienta um colega sobre treino e recuperação."
+        ]
       },
       {
-        text: `Did talking about <span class="blank"></span> change your opinion at all? Why or why not?`,
-        hint: "Meta-reflexão. Mesmo que não mudou, explique por quê a sua visão é sólida.",
-        tag: "speaking",
-        time: 60
+        id: "doctor-visit",
+        label: "Doctor Visit",
+        description: "sintomas, consulta e orientações",
+        vocabulary: [
+          { word: "symptom", meaning: "sintoma", example: "My main symptom is a sore throat." },
+          { word: "prescription", meaning: "receita médica", example: "Could you explain this prescription?" },
+          { word: "appointment", meaning: "consulta agendada", example: "I need to book an appointment." }
+        ],
+        pronunciationTips: ["symptom /simptom/", "throat /throut/", "appointment /apointment/"],
+        rolePlays: [
+          "Você descreve sintomas ao médico em inglês.",
+          "Você é médico e orienta o paciente com clareza."
+        ]
+      }
+    ]
+  },
+  {
+    id: "culture",
+    label: "Culture & Leisure",
+    topics: [
+      {
+        id: "movies",
+        label: "Movies",
+        description: "gêneros, críticas e recomendações",
+        vocabulary: [
+          { word: "plot", meaning: "enredo", example: "The plot is simple but emotional." },
+          { word: "cast", meaning: "elenco", example: "The cast did a fantastic job." },
+          { word: "soundtrack", meaning: "trilha sonora", example: "The soundtrack is unforgettable." }
+        ],
+        pronunciationTips: ["plot /plot/", "genre /janra/", "cast /kast/"],
+        rolePlays: [
+          "Você recomenda um filme para alguém com gosto diferente.",
+          "Você debate se o final do filme foi bom ou ruim."
+        ]
       },
       {
-        text: `What's one question about <span class="blank"></span> that we didn't cover that you'd still like to explore?`,
-        hint: "Abertura para próximas aulas. Pratique formular perguntas de forma natural e curiosa.",
-        tag: "speaking",
-        time: 45
+        id: "music",
+        label: "Music",
+        description: "estilos, letras e experiências",
+        vocabulary: [
+          { word: "lyrics", meaning: "letras da música", example: "I focus on the lyrics to learn English." },
+          { word: "beat", meaning: "batida", example: "The beat makes the song catchy." },
+          { word: "live concert", meaning: "show ao vivo", example: "I went to a live concert last month." }
+        ],
+        pronunciationTips: ["lyrics /liriks/", "beat /biit/", "concert /konsert/"],
+        rolePlays: [
+          "Você compra ingresso para um show em inglês.",
+          "Você entrevista um amigo sobre artista favorito."
+        ]
       }
     ]
   }
 ];
 
-let currentPhase = 0;
-let answered = {};
-let timerInterval = null;
-let topicVal = '';
-
-function generateLesson() {
-  topicVal = document.getElementById('topicInput').value.trim();
-  if (!topicVal) {
-    document.getElementById('topicInput').focus();
-    return;
+const LEVEL_TEMPLATES = {
+  beginner: {
+    "warm-up": [
+      { text: "What simple words do you know about {{topic}}?", hint: "Diga 3 palavras e uma frase curta para cada.", tag: "speaking", time: 35, grammarFocus: "simple-present", usefulExpressions: ["I usually...", "I like...", "In my routine..."] },
+      { text: "When did you first hear about {{topic}}?", hint: "Use passado simples em frases curtas.", tag: "speaking", time: 40, grammarFocus: "past-simple", usefulExpressions: ["I first heard about it when...", "At that time...", "It was..."] }
+    ],
+    "opinion": [
+      { text: "Do you like {{topic}}? Why?", hint: "Use because para justificar.", tag: "speaking", time: 45, grammarFocus: "because-clauses", usefulExpressions: ["I think...", "Because...", "For me..."] },
+      { text: "What is one good and one bad thing about {{topic}}?", hint: "Estrutura: One good thing is... / One bad thing is...", tag: "extended", time: 50, grammarFocus: "comparatives", usefulExpressions: ["One good thing is...", "One bad thing is...", "In my opinion..."] }
+    ],
+    "deep-dive": [
+      { text: "How does {{topic}} help people in daily life?", hint: "Dê exemplos simples.", tag: "extended", time: 55, grammarFocus: "simple-present", usefulExpressions: ["For example...", "People can...", "This helps because..."] },
+      { text: "If you had one change in {{topic}}, what would it be?", hint: "Use: I would...", tag: "extended", time: 60, grammarFocus: "first-conditional", usefulExpressions: ["I would change...", "This would...", "It could..."] }
+    ],
+    "listening": [
+      { text: "Ask your partner to explain {{topic}} for one minute. Then summarize.", hint: "Resumo com 2-3 frases.", tag: "listening", time: 60, grammarFocus: "reported-ideas", usefulExpressions: ["You said that...", "I understood that...", "So basically..."] },
+      { text: "Ask your partner about a personal experience with {{topic}}.", hint: "Faça duas perguntas de follow-up.", tag: "listening", time: 60, grammarFocus: "question-forms", usefulExpressions: ["Can you explain more?", "What happened next?", "How did you feel?"] }
+    ],
+    "wrap-up": [
+      { text: "What was the most useful thing you learned about {{topic}}?", hint: "Frase curta e clara.", tag: "speaking", time: 40, grammarFocus: "past-simple", usefulExpressions: ["The most useful thing was...", "I learned that...", "Now I can..."] },
+      { text: "What do you want to practice next about {{topic}}?", hint: "Pense em próximo passo real.", tag: "speaking", time: 40, grammarFocus: "future-plan", usefulExpressions: ["Next time I want to...", "I need to improve...", "My goal is..."] }
+    ]
+  },
+  intermediate: {
+    "warm-up": [
+      { text: "What comes to your mind when people mention {{topic}}?", hint: "Conecte ideias por 45+ segundos.", tag: "speaking", time: 50, grammarFocus: "linkers", usefulExpressions: ["The first thing that comes to mind is...", "Besides that...", "Another point is..."] },
+      { text: "How has your perspective on {{topic}} changed over time?", hint: "Compare passado e presente.", tag: "speaking", time: 60, grammarFocus: "present-perfect", usefulExpressions: ["I used to...", "Nowadays...", "Over time..."] }
+    ],
+    "opinion": [
+      { text: "Do the benefits of {{topic}} outweigh the drawbacks?", hint: "Organize argumentos em duas partes.", tag: "extended", time: 70, grammarFocus: "argument-structure", usefulExpressions: ["On the one hand...", "On the other hand...", "Overall..."] },
+      { text: "What is a common misconception about {{topic}}?", hint: "Mostre contraste entre mito e realidade.", tag: "extended", time: 75, grammarFocus: "contrast", usefulExpressions: ["Many people assume...", "In reality...", "What actually happens is..."] }
+    ],
+    "deep-dive": [
+      { text: "How does {{topic}} influence behavior in your city or workplace?", hint: "Use exemplos concretos e resultados.", tag: "extended", time: 80, grammarFocus: "cause-effect", usefulExpressions: ["A clear example is...", "This leads to...", "As a result..."] },
+      { text: "If {{topic}} disappeared tomorrow, what would change first?", hint: "Raciocínio em cadeia.", tag: "extended", time: 85, grammarFocus: "second-conditional", usefulExpressions: ["If it disappeared...", "The immediate impact would be...", "Then..."] }
+    ],
+    "listening": [
+      { text: "Ask your partner for a 90-second opinion on {{topic}} and summarize key points.", hint: "Resumo + reação crítica.", tag: "listening", time: 90, grammarFocus: "summary", usefulExpressions: ["Your main point was...", "I agree because...", "I would challenge..."] },
+      { text: "Ask your partner to defend the opposite view on {{topic}}.", hint: "Pratique devil's advocate.", tag: "listening", time: 90, grammarFocus: "debate-language", usefulExpressions: ["I see your point, however...", "Could we consider...", "From another angle..."] }
+    ],
+    "wrap-up": [
+      { text: "What argument was strongest today and why?", hint: "Foque em lógica e evidência.", tag: "speaking", time: 60, grammarFocus: "reasoning", usefulExpressions: ["The strongest argument was...", "It stood out because...", "Evidence included..."] },
+      { text: "What speaking skill do you want to improve next?", hint: "Defina ação clara.", tag: "speaking", time: 55, grammarFocus: "goal-setting", usefulExpressions: ["I still struggle with...", "My next step is...", "I'll practice by..."] }
+    ]
+  },
+  advanced: {
+    "warm-up": [
+      { text: "Frame {{topic}} as a societal challenge in under 60 seconds.", hint: "Síntese sofisticada com precisão.", tag: "extended", time: 65, grammarFocus: "concise-framing", usefulExpressions: ["At its core...", "The challenge lies in...", "What complicates it is..."] },
+      { text: "Which assumptions shape public discourse around {{topic}}?", hint: "Questione premissas.", tag: "extended", time: 75, grammarFocus: "critical-thinking", usefulExpressions: ["The dominant assumption is...", "This narrative ignores...", "A more nuanced view is..."] }
+    ],
+    "opinion": [
+      { text: "To what extent should policy regulate {{topic}}?", hint: "Balanceie liberdade e responsabilidade.", tag: "extended", time: 90, grammarFocus: "hedging", usefulExpressions: ["To some extent...", "A balanced policy would...", "Regulation is justified when..."] },
+      { text: "Defend and then challenge your own position on {{topic}}.", hint: "Argumentação bidirecional.", tag: "extended", time: 95, grammarFocus: "counterargument", usefulExpressions: ["My initial stance is...", "That said...", "A serious objection is..."] }
+    ],
+    "deep-dive": [
+      { text: "Analyze long-term consequences of {{topic}} across work, culture, and education.", hint: "Estruture por domínios.", tag: "extended", time: 110, grammarFocus: "multi-domain-analysis", usefulExpressions: ["In the workplace...", "Culturally speaking...", "In educational terms..."] },
+      { text: "What trade-offs are unavoidable when scaling {{topic}} globally?", hint: "Pense em eficiência, ética e acesso.", tag: "extended", time: 120, grammarFocus: "trade-off-language", usefulExpressions: ["A key trade-off is...", "Scaling creates...", "The cost of this approach is..."] }
+    ],
+    "listening": [
+      { text: "Ask for a two-minute mini-lecture on {{topic}} and interrogate the logic.", hint: "Resumo crítico + perguntas de precisão.", tag: "listening", time: 120, grammarFocus: "critical-listening", usefulExpressions: ["Your claim relies on...", "What evidence supports...", "How would you respond to..."] },
+      { text: "Run a structured debate: your partner argues for regulation, you against (then switch).", hint: "Troca de posição para flexibilidade verbal.", tag: "listening", time: 120, grammarFocus: "debate-register", usefulExpressions: ["Let me challenge that...", "A stronger case would require...", "I concede that..., yet..."] }
+    ],
+    "wrap-up": [
+      { text: "Which idea from today deserves deeper investigation and why?", hint: "Apresente recorte específico.", tag: "speaking", time: 70, grammarFocus: "research-language", usefulExpressions: ["The most fertile idea is...", "It matters because...", "A next question would be..."] },
+      { text: "What linguistic choices made your argument more persuasive today?", hint: "Meta-análise de performance.", tag: "speaking", time: 70, grammarFocus: "metacognition", usefulExpressions: ["What worked well was...", "I noticed that...", "Next time I'll refine..."] }
+    ]
   }
-  answered = {};
-  currentPhase = 0;
-  renderPhase(0);
-  updatePhaseList();
+};
+
+const FILL_BLANK_TEMPLATES = {
+  beginner: [
+    { sentence: "I usually ___ about {{topic}} with my friends.", answers: ["talk", "chat"] },
+    { sentence: "Yesterday I ___ something new about {{topic}}.", answers: ["learned", "found out"] }
+  ],
+  intermediate: [
+    { sentence: "{{topic}} has ___ the way people communicate.", answers: ["changed", "transformed"] },
+    { sentence: "If I had more time, I would ___ {{topic}} in depth.", answers: ["explore", "study"] }
+  ],
+  advanced: [
+    { sentence: "Public opinion on {{topic}} is often ___ by media framing.", answers: ["shaped", "influenced"] },
+    { sentence: "Any policy on {{topic}} must ___ competing priorities.", answers: ["balance", "reconcile"] }
+  ]
+};
+
+let predefinedQuestions = [];
+let currentPhase = 0;
+let currentLevel = "beginner";
+let currentMode = "lesson";
+let selectedCategory = TOPIC_CATALOG[0].id;
+let selectedTopicId = TOPIC_CATALOG[0].topics[0].id;
+let topicLabel = TOPIC_CATALOG[0].topics[0].label;
+let answered = {};
+let favorites = {};
+let notesStore = {};
+let timerHistory = [];
+let activeQuestionId = "";
+let randomOnly = false;
+let timerState = { interval: null, remaining: 0, total: 0, paused: false, question: "" };
+const phaseProgressTotals = {};
+let currentTheme = "dark";
+
+function getTopicById(categoryId, topicId) {
+  const category = TOPIC_CATALOG.find((c) => c.id === categoryId);
+  if (!category) return null;
+  return category.topics.find((t) => t.id === topicId) || null;
+}
+
+function normalizeTime(level, baseTime) {
+  const cfg = LEVELS[level];
+  return Math.max(cfg.minTime, Math.min(cfg.maxTime, baseTime));
+}
+
+function buildPredefinedQuestions() {
+  const result = [];
+  Object.keys(LEVEL_TEMPLATES).forEach((levelKey) => {
+    TOPIC_CATALOG.forEach((category) => {
+      category.topics.forEach((topic) => {
+        PHASES.forEach((phase) => {
+          const templates = LEVEL_TEMPLATES[levelKey][phase.id];
+          templates.forEach((tpl, idx) => {
+            const qId = `${levelKey}-${category.id}-${topic.id}-${phase.id}-${idx}`;
+            result.push({
+              id: qId,
+              level: levelKey,
+              phase: phase.id,
+              category: category.id,
+              topic: topic.id,
+              text: tpl.text,
+              hint: tpl.hint,
+              tag: tpl.tag,
+              time: normalizeTime(levelKey, tpl.time),
+              usefulExpressions: tpl.usefulExpressions,
+              grammarFocus: tpl.grammarFocus
+            });
+          });
+        });
+      });
+    });
+  });
+  return result;
+}
+
+function saveState() {
+  const payload = { answered, favorites, notesStore, timerHistory, phaseProgressTotals };
+  localStorage.setItem("englishCoachStateV1", JSON.stringify(payload));
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem("englishCoachStateV1");
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    answered = parsed.answered || {};
+    favorites = parsed.favorites || {};
+    notesStore = parsed.notesStore || {};
+    timerHistory = parsed.timerHistory || [];
+    Object.assign(phaseProgressTotals, parsed.phaseProgressTotals || {});
+  } catch (err) {
+    console.warn("Estado local inválido:", err);
+  }
+}
+
+function updateCategoryOptions() {
+  const sel = document.getElementById("categorySelect");
+  sel.innerHTML = TOPIC_CATALOG.map((c) => `<option value="${c.id}">${c.label}</option>`).join("");
+  sel.value = selectedCategory;
+}
+
+function updateTopicOptions() {
+  const cat = TOPIC_CATALOG.find((c) => c.id === selectedCategory) || TOPIC_CATALOG[0];
+  const sel = document.getElementById("topicSelect");
+  sel.innerHTML = cat.topics.map((t) => `<option value="${t.id}">${t.label} — ${t.description}</option>`).join("");
+  if (!cat.topics.some((t) => t.id === selectedTopicId)) selectedTopicId = cat.topics[0].id;
+  sel.value = selectedTopicId;
+}
+
+function updatePhaseList() {
+  const list = document.getElementById("phaseList");
+  const topicKey = getTopicKey();
+  list.innerHTML = PHASES.map((phase, i) => {
+    const qs = getFilteredQuestions(phase.id);
+    const done = qs.length > 0 && qs.every((q) => answered[`${topicKey}|${q.id}`]);
+    const cls = `${i === currentPhase ? "active" : ""} ${done ? "done" : ""}`.trim();
+    return `<div class="phase-item ${cls}" data-phase-idx="${i}"><span class="phase-dot"></span>${phase.name}</div>`;
+  }).join("");
+  list.querySelectorAll(".phase-item").forEach((el) => {
+    el.addEventListener("click", () => goToPhase(Number(el.dataset.phaseIdx)));
+  });
+}
+
+function getTopicKey() {
+  return `${currentLevel}|${selectedCategory}|${selectedTopicId}|${topicLabel}`;
+}
+
+function getEffectiveTopicLabel() {
+  const custom = document.getElementById("customTopicInput").value.trim();
+  if (custom) return custom;
+  const topic = getTopicById(selectedCategory, selectedTopicId);
+  return topic ? topic.label : "general topic";
+}
+
+function getFilteredQuestions(phaseId) {
+  const all = predefinedQuestions.filter((q) =>
+    q.level === currentLevel &&
+    q.category === selectedCategory &&
+    q.topic === selectedTopicId &&
+    q.phase === phaseId
+  );
+  return all;
+}
+
+function buildFillBlank(level, topic) {
+  return FILL_BLANK_TEMPLATES[level].map((ex, idx) => ({
+    id: `${level}-${selectedCategory}-${selectedTopicId}-fill-${idx}`,
+    sentence: ex.sentence.replace(/{{topic}}/g, topic),
+    answers: ex.answers
+  }));
+}
+
+function renderDashboard(currentPhaseQuestions) {
+  const topicKey = getTopicKey();
+  const totalForTopic = PHASES.reduce((sum, p) => sum + getFilteredQuestions(p.id).length, 0);
+  const doneForTopic = Object.keys(answered).filter((k) => k.startsWith(topicKey + "|") && answered[k]).length;
+  const completion = totalForTopic ? Math.round((doneForTopic / totalForTopic) * 100) : 0;
+  const timerTotal = timerHistory.reduce((acc, t) => acc + t.duration, 0);
+  const favCount = Object.keys(favorites).filter((k) => favorites[k]).length;
+  const phaseDone = currentPhaseQuestions.filter((q) => answered[`${topicKey}|${q.id}`]).length;
+  return `
+    <section class="dashboard">
+      <article class="dash-card">
+        <div class="dash-label">Nível</div>
+        <div class="dash-value">${LEVELS[currentLevel].label}</div>
+        <div class="dash-sub">${LEVELS[currentLevel].complexity}</div>
+      </article>
+      <article class="dash-card">
+        <div class="dash-label">Progresso do tópico</div>
+        <div class="dash-value">${completion}%</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${completion}%"></div></div>
+      </article>
+      <article class="dash-card">
+        <div class="dash-label">Fase atual</div>
+        <div class="dash-value">${phaseDone}/${currentPhaseQuestions.length || 0}</div>
+        <div class="dash-sub">${PHASES[currentPhase].name}</div>
+      </article>
+      <article class="dash-card">
+        <div class="dash-label">Tempo praticado</div>
+        <div class="dash-value">${Math.round(timerTotal / 60)}m</div>
+        <div class="dash-sub">Favoritas: ${favCount}</div>
+      </article>
+    </section>
+  `;
+}
+
+function renderQuestionCard(q, idx) {
+  const topicKey = getTopicKey();
+  const done = !!answered[`${topicKey}|${q.id}`];
+  const fav = !!favorites[q.id];
+  const renderedText = q.text.replace(/{{topic}}/g, `<span class="blank-topic">${topicLabel}</span>`);
+  const expressions = q.usefulExpressions.map((e) => `<li>${e}</li>`).join("");
+  const noteVal = notesStore[q.id] || "";
+  const showHint = currentMode !== "practice";
+  const grammar = buildGrammarExercise(q);
+  const topicData = getTopicById(selectedCategory, selectedTopicId);
+  const rolePlay = topicData ? topicData.rolePlays[idx % topicData.rolePlays.length] : "";
+  const fillEx = buildFillBlank(currentLevel, topicLabel)[idx % 2];
+
+  return `
+    <article class="card question-card ${done ? "answered" : ""}" id="q-${q.id}">
+      <div class="q-meta">
+        <div style="display:flex;gap:0.35rem;flex-wrap:wrap">
+          <span class="q-tag ${q.tag}">${q.tag}</span>
+          <span class="badge level-${currentLevel}">${LEVELS[currentLevel].label}</span>
+          <span class="badge">${q.phase}</span>
+        </div>
+        <span class="small">#${idx + 1}</span>
+      </div>
+      <p class="q-text">${renderedText}</p>
+      ${showHint ? `<p class="q-hint">${q.hint}</p>` : ""}
+
+      <div class="split">
+        <div class="stack">
+          <section class="card" style="padding:0.7rem">
+            <p class="mini-title">Useful expressions</p>
+            <ul class="list">${expressions}</ul>
+          </section>
+
+          <section class="card" style="padding:0.7rem">
+            <p class="mini-title">Grammar focus</p>
+            <p class="small">${q.grammarFocus}</p>
+            <p style="margin-top:0.4rem;font-size:0.78rem">${grammar.prompt}</p>
+            <input class="topic-input answer-input" type="text" id="grammar-${q.id}" placeholder="Digite sua resposta">
+            <button class="btn btn-green js-check-grammar" type="button" data-question-id="${q.id}" data-answer="${escapeHtmlAttr(serializeAnswers(grammar.answers))}" data-sentence="${escapeHtmlAttr(grammar.prompt)}" onclick="checkGrammarFromButton(this)">Checar</button>
+            <div id="grammar-feedback-${q.id}" class="check-feedback" aria-live="polite"></div>
+          </section>
+
+          <section class="card" style="padding:0.7rem">
+            <p class="mini-title">Fill in the blank</p>
+            <p style="font-size:0.8rem">${fillEx.sentence}</p>
+            <input class="topic-input answer-input" type="text" id="fill-${q.id}" placeholder="Palavra faltando">
+            <button class="btn btn-green js-check-fill" type="button" data-question-id="${q.id}" data-answer="${escapeHtmlAttr(serializeAnswers(fillEx.answers))}" data-sentence="${escapeHtmlAttr(fillEx.sentence)}" onclick="checkFillFromButton(this)">Checar</button>
+            <div id="fill-feedback-${q.id}" class="check-feedback" aria-live="polite"></div>
+          </section>
+        </div>
+
+        <div class="stack">
+          <section class="card" style="padding:0.7rem">
+            <p class="mini-title">Role-play scenario</p>
+            <p style="font-size:0.8rem;line-height:1.5">${rolePlay}</p>
+          </section>
+
+          <section class="card" style="padding:0.7rem">
+            <p class="mini-title">Notas e feedback</p>
+            <textarea class="textarea" rows="5" id="note-${q.id}" placeholder="Anote correções, vocabulário novo e feedback">${noteVal}</textarea>
+            <div class="btn-row" style="margin-top:0.4rem">
+              <button class="btn btn-green" type="button" onclick="saveNote('${q.id}')">Salvar nota</button>
+              <button class="btn ${fav ? "btn-danger" : "btn-blue"}" type="button" onclick="toggleFavorite('${q.id}')">${fav ? "Remover favorito" : "Favoritar"}</button>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:0.6rem">
+        <button class="btn" type="button" onclick="startTimer(${q.time}, '${escapeSingle(q.text.replace(/{{topic}}/g, topicLabel))}', '${q.id}')">Iniciar timer ${q.time}s</button>
+        <button class="btn btn-green" type="button" onclick="markDone('${q.id}')">${done ? "Marcada" : "Marcar concluída"}</button>
+        ${done ? `<button class="btn btn-danger" type="button" onclick="unmarkDone('${q.id}')">Desmarcar</button>` : ""}
+      </div>
+    </article>
+  `;
+}
+
+function renderVocabularyPanel() {
+  const topic = getTopicById(selectedCategory, selectedTopicId);
+  if (!topic) return "";
+  const rows = topic.vocabulary.map((v, idx) => `
+    <li>
+      <strong>${v.word}</strong> — ${v.meaning}<br>
+      <span class="small">${v.example}</span>
+      <button class="btn" style="margin-top:0.25rem" type="button" onclick="speak('${escapeSingle(v.word)}')">Pronunciar</button>
+    </li>
+  `).join("");
+  const tips = topic.pronunciationTips.map((t) => `<li>${t}</li>`).join("");
+  return `
+    <section class="card">
+      <p class="mini-title">Vocabulary builder</p>
+      <ul class="list">${rows}</ul>
+      <p class="mini-title" style="margin-top:0.8rem">Dicas de pronúncia</p>
+      <ul class="list">${tips}</ul>
+    </section>
+  `;
+}
+
+function renderHistoryPanel() {
+  const rows = timerHistory.slice(-5).reverse().map((h) => `<div>${h.topic} • ${h.duration}s • ${h.when}</div>`).join("");
+  return `
+    <section class="card">
+      <p class="mini-title">Histórico de timer</p>
+      <div class="history-list">${rows || "<div>Sem histórico ainda.</div>"}</div>
+    </section>
+  `;
 }
 
 function renderPhase(idx) {
   currentPhase = idx;
-  const phase = phases[idx];
-  const main = document.getElementById('mainArea');
+  const phase = PHASES[idx];
+  const qs = getFilteredQuestions(phase.id);
+  const main = document.getElementById("mainArea");
+  const dataset = currentMode === "practice" || randomOnly ? [qs[Math.floor(Math.random() * qs.length)]].filter(Boolean) : qs;
 
-  const answered_here = phase.questions.map((_,i) => answered[`${idx}-${i}`] ? true : false);
-  const doneCount = answered_here.filter(Boolean).length;
+  if (!dataset.length) {
+    main.innerHTML = `
+      ${renderDashboard(qs)}
+      <section class="card"><p>Não há questões para este filtro. Escolha outro tópico/categoria.</p></section>
+    `;
+    updatePhaseList();
+    return;
+  }
 
-  let html = `
-    <div class="score-bar">
-      <div>
-        <div class="score-label">Progresso desta fase</div>
-        <div><span class="score-num">${doneCount}</span><span class="score-total"> / ${phase.questions.length}</span></div>
-      </div>
-      <div style="flex:1;height:4px;background:#222;border-radius:2px;overflow:hidden">
-        <div style="width:${(doneCount/phase.questions.length)*100}%;height:100%;background:var(--green);transition:width 0.4s"></div>
-      </div>
-    </div>
-    <div class="phase-header">
-      <p class="phase-number">Fase ${idx+1} de ${phases.length}</p>
-      <h2 class="phase-name">${phase.name}</h2>
-      <p class="phase-desc">${phase.desc}</p>
-    </div>
-    <div class="questions-grid">
+  const questionHTML = dataset.map((q, i) => renderQuestionCard(q, i)).join("");
+  const sidePanels = `
+    <section class="stack">
+      ${renderVocabularyPanel()}
+      ${renderHistoryPanel()}
+      <section class="card">
+        <p class="mini-title">Resumo da fase</p>
+        <p class="small">Modo: ${currentMode}. Tema: ${topicLabel}. Categoria: ${TOPIC_CATALOG.find((c) => c.id === selectedCategory).label}.</p>
+      </section>
+    </section>
   `;
 
-  phase.questions.forEach((q, i) => {
-    const isDone = answered[`${idx}-${i}`];
-    const qText = q.text.replace(/<span class="blank"[^>]*><\/span>/g, `<span class="blank">${topicVal}</span>`);
-    html += `
-      <div class="q-card ${isDone ? 'answered' : ''}" id="qcard-${idx}-${i}">
-        <div class="q-meta">
-          <span class="q-tag ${q.tag}">${q.tag === 'speaking' ? '🗣 Speaking' : q.tag === 'listening' ? '🎧 Listening' : '🔥 Extended'}</span>
-          <span class="q-number">#${i+1}</span>
-        </div>
-        <p class="q-text">${qText}</p>
-        <p class="q-hint">${q.hint}</p>
-        <div class="q-actions">
-          <button class="btn-sm" onclick="startTimer(${q.time}, \`${qText.replace(/`/g,"'")}\`)">⏱ ${q.time}s timer</button>
-          <button class="btn-sm primary" onclick="markDone(${idx},${i})">${isDone ? '✓ Feito' : 'Marcar feita'}</button>
-          ${idx < phases.length-1 && i === phase.questions.length-1 ? `<button class="btn-sm" style="margin-left:auto;border-color:var(--accent);color:var(--accent)" onclick="goToPhase(${idx+1})">Próxima fase →</button>` : ''}
-        </div>
-      </div>
-    `;
-  });
-
-  html += `</div>`;
-
-  // Navigation
-  html += `<div style="display:flex;gap:0.8rem;padding-top:0.5rem">`;
-  if (idx > 0) html += `<button class="btn-sm" onclick="goToPhase(${idx-1})">← Fase anterior</button>`;
-  if (idx < phases.length-1) html += `<button class="btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="goToPhase(${idx+1})">Próxima fase →</button>`;
-  html += `</div>`;
-
-  main.innerHTML = html;
-  main.scrollTo({ top: 0, behavior: 'smooth' });
+  main.innerHTML = `
+    ${renderDashboard(qs)}
+    <section class="phase-header">
+      <p class="phase-number">Fase ${idx + 1} de ${PHASES.length}</p>
+      <h2 class="phase-name">${phase.name}</h2>
+      <p class="phase-desc">${phase.desc}</p>
+    </section>
+    <section class="split">
+      <div class="stack">${questionHTML}</div>
+      ${sidePanels}
+    </section>
+    <div class="btn-row">
+      ${idx > 0 ? `<button class="btn" type="button" onclick="goToPhase(${idx - 1})">Fase anterior</button>` : ""}
+      ${idx < PHASES.length - 1 ? `<button class="btn btn-blue" type="button" onclick="goToPhase(${idx + 1})">Próxima fase</button>` : ""}
+    </div>
+  `;
   updatePhaseList();
+  main.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function goToPhase(idx) {
-  if (!topicVal) return;
+  if (idx < 0 || idx >= PHASES.length) return;
   renderPhase(idx);
 }
 
-function markDone(phaseIdx, qIdx) {
-  answered[`${phaseIdx}-${qIdx}`] = true;
-  renderPhase(phaseIdx);
+function generateLesson() {
+  currentLevel = document.getElementById("levelSelect").value;
+  currentMode = document.getElementById("modeSelect").value;
+  selectedCategory = document.getElementById("categorySelect").value;
+  selectedTopicId = document.getElementById("topicSelect").value;
+  topicLabel = getEffectiveTopicLabel();
+  randomOnly = false;
+  renderPhase(0);
 }
 
-function updatePhaseList() {
-  const items = document.querySelectorAll('.phase-item');
-  items.forEach((el, i) => {
-    el.classList.remove('active','done');
-    const phase = phases[i];
-    const allDone = phase.questions.every((_,j) => answered[`${i}-${j}`]);
-    if (allDone) el.classList.add('done');
-    else if (i === currentPhase) el.classList.add('active');
-  });
+function randomLesson() {
+  currentLevel = document.getElementById("levelSelect").value;
+  currentMode = "practice";
+  document.getElementById("modeSelect").value = "practice";
+  selectedCategory = document.getElementById("categorySelect").value;
+  selectedTopicId = document.getElementById("topicSelect").value;
+  topicLabel = getEffectiveTopicLabel();
+  randomOnly = true;
+  const randomPhase = Math.floor(Math.random() * PHASES.length);
+  renderPhase(randomPhase);
 }
 
-function startTimer(seconds, question) {
-  clearInterval(timerInterval);
-  let remaining = seconds;
-  document.getElementById('timerNum').textContent = remaining;
-  document.getElementById('timerQ').textContent = question.replace(/<[^>]+>/g,'');
-  document.getElementById('timerOverlay').classList.add('active');
+function markDone(questionId) {
+  const key = `${getTopicKey()}|${questionId}`;
+  answered[key] = true;
+  phaseProgressTotals[questionId] = (phaseProgressTotals[questionId] || 0) + 1;
+  saveState();
+  renderPhase(currentPhase);
+}
 
-  timerInterval = setInterval(() => {
-    remaining--;
-    document.getElementById('timerNum').textContent = remaining;
-    if (remaining <= 10) document.getElementById('timerNum').style.color = 'var(--red)';
-    else document.getElementById('timerNum').style.color = 'var(--accent)';
-    if (remaining <= 0) {
-      clearInterval(timerInterval);
-      document.getElementById('timerNum').textContent = '✓';
-    }
-  }, 1000);
+function unmarkDone(questionId) {
+  const key = `${getTopicKey()}|${questionId}`;
+  delete answered[key];
+  saveState();
+  renderPhase(currentPhase);
+}
+
+function toggleFavorite(questionId) {
+  favorites[questionId] = !favorites[questionId];
+  saveState();
+  renderPhase(currentPhase);
+}
+
+function saveNote(questionId) {
+  const field = document.getElementById(`note-${questionId}`);
+  if (!field) return;
+  notesStore[questionId] = field.value;
+  saveState();
+}
+
+function buildGrammarExercise(q) {
+  const map = {
+    "simple-present": { prompt: `Complete: "I usually ____ ${topicLabel} every week."`, answers: ["practice", "study"] },
+    "past-simple": { prompt: `Complete: "Last year, I ____ more about ${topicLabel}."`, answers: ["learned", "studied"] },
+    "first-conditional": { prompt: `Complete: "If I have time, I ____ ${topicLabel} more."`, answers: ["will study", "will practice"] },
+    "present-perfect": { prompt: `Complete: "I ____ interested in ${topicLabel} for years."`, answers: ["have been"] },
+    "second-conditional": { prompt: `Complete: "If ${topicLabel} disappeared, people ____ affected."`, answers: ["would be"] },
+    "trade-off-language": { prompt: `Complete: "A key trade-off ____ efficiency and fairness."`, answers: ["is between", "exists between"] }
+  };
+  return map[q.grammarFocus] || { prompt: `Complete: "This topic ____ important in real life."`, answers: ["is"] };
+}
+
+function normalizeAnswer(str) {
+  return String(str || "")
+    .toLowerCase()
+    .replace(/[.,!?;:"]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function serializeAnswers(answers) {
+  return (answers || []).join("||");
+}
+
+function deserializeAnswers(raw) {
+  return String(raw || "")
+    .split("||")
+    .map((x) => x.trim())
+    .filter(Boolean);
+}
+
+function fillSentence(sentence, answer) {
+  return String(sentence || "").replace("___", answer).replace("____", answer);
+}
+
+function writeCheckFeedback(type, questionId, ok, optionsText, phraseText) {
+  const el = document.getElementById(`${type}-feedback-${questionId}`);
+  if (!el) return;
+  const header = ok ? "Correto!" : "Ainda não.";
+  const label = type === "grammar" ? "Frase exemplo" : "Frase completa";
+  el.classList.remove("success", "error");
+  el.classList.add(ok ? "success" : "error");
+  el.style.display = "block";
+  el.textContent = `${header}\nOpções aceitas: ${optionsText}\n${label}: ${phraseText}`;
+}
+
+function checkFill(questionId, answers, sentence) {
+  const accepted = Array.isArray(answers) ? answers : [answers];
+  const val = normalizeAnswer(document.getElementById(`fill-${questionId}`).value || "");
+  const normalizedAccepted = accepted.map(normalizeAnswer);
+  const ok = normalizedAccepted.includes(val);
+  const optionsText = accepted.join(" | ");
+  const phraseText = fillSentence(sentence, accepted[0] || "");
+  writeCheckFeedback("fill", questionId, ok, optionsText, phraseText);
+}
+
+function checkGrammar(questionId, answers, sentence) {
+  const accepted = Array.isArray(answers) ? answers : [answers];
+  const val = normalizeAnswer(document.getElementById(`grammar-${questionId}`).value || "");
+  const normalizedAccepted = accepted.map(normalizeAnswer);
+  const ok = normalizedAccepted.includes(val);
+  const optionsText = accepted.join(" | ");
+  const phraseText = fillSentence(sentence, accepted[0] || "");
+  writeCheckFeedback("grammar", questionId, ok, optionsText, phraseText);
+}
+
+function checkGrammarFromButton(btn) {
+  const qid = btn.dataset.questionId;
+  const answers = deserializeAnswers(decodeHtmlAttr(btn.dataset.answer || ""));
+  const sentence = decodeHtmlAttr(btn.dataset.sentence || "");
+  checkGrammar(qid, answers, sentence);
+}
+
+function checkFillFromButton(btn) {
+  const qid = btn.dataset.questionId;
+  const answers = deserializeAnswers(decodeHtmlAttr(btn.dataset.answer || ""));
+  const sentence = decodeHtmlAttr(btn.dataset.sentence || "");
+  checkFill(qid, answers, sentence);
+}
+
+function startTimer(seconds, question, qId) {
+  closeTimer();
+  timerState.remaining = seconds;
+  timerState.total = seconds;
+  timerState.paused = false;
+  timerState.question = question.replace(/<[^>]+>/g, "");
+  activeQuestionId = qId;
+  document.getElementById("timerNum").textContent = timerState.remaining;
+  document.getElementById("timerQ").textContent = timerState.question;
+  document.getElementById("timerOverlay").classList.add("active");
+  tickTimer();
+  timerState.interval = setInterval(tickTimer, 1000);
+}
+
+function tickTimer() {
+  if (timerState.paused) return;
+  timerState.remaining -= 1;
+  const timerNum = document.getElementById("timerNum");
+  if (timerState.remaining <= 0) {
+    timerNum.textContent = "✓";
+    timerNum.style.color = "var(--green)";
+    pushTimerHistory(timerState.total);
+    clearInterval(timerState.interval);
+    timerState.interval = null;
+    return;
+  }
+  timerNum.textContent = timerState.remaining;
+  timerNum.style.color = timerState.remaining <= 10 ? "var(--red)" : "var(--accent)";
+  if (timerState.remaining <= 3) beep();
+}
+
+function pauseTimer() {
+  timerState.paused = true;
+}
+
+function resumeTimer() {
+  if (!timerState.interval) return;
+  timerState.paused = false;
 }
 
 function closeTimer() {
-  clearInterval(timerInterval);
-  document.getElementById('timerOverlay').classList.remove('active');
+  if (timerState.interval) clearInterval(timerState.interval);
+  timerState.interval = null;
+  timerState.paused = false;
+  document.getElementById("timerOverlay").classList.remove("active");
 }
+
+function pushTimerHistory(duration) {
+  timerHistory.push({
+    duration,
+    topic: topicLabel,
+    when: new Date().toLocaleString("pt-BR")
+  });
+  if (timerHistory.length > 100) timerHistory = timerHistory.slice(-100);
+  saveState();
+}
+
+function beep() {
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if (!Ctx) return;
+  const ctx = new Ctx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = "sine";
+  osc.frequency.value = 880;
+  gain.gain.value = 0.04;
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime + 0.08);
+}
+
+function speak(text) {
+  if (!("speechSynthesis" in window)) return alert("Seu navegador não suporta síntese de voz.");
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "en-US";
+  speechSynthesis.speak(u);
+}
+
+function exportReport() {
+  const report = {
+    level: currentLevel,
+    mode: currentMode,
+    category: selectedCategory,
+    topic: topicLabel,
+    answeredCount: Object.values(answered).filter(Boolean).length,
+    favoriteCount: Object.values(favorites).filter(Boolean).length,
+    notes: notesStore,
+    timerHistory: timerHistory.slice(-20)
+  };
+  const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `english-report-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function escapeSingle(str) {
+  return String(str).replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\n/g, " ");
+}
+
+function escapeHtmlAttr(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function decodeHtmlAttr(str) {
+  const txt = document.createElement("textarea");
+  txt.innerHTML = str;
+  return txt.value;
+}
+
+function toggleSidebar() {
+  const app = document.querySelector(".app");
+  app.classList.toggle("sidebar-collapsed");
+  const isCollapsed = app.classList.contains("sidebar-collapsed");
+  const btn = document.getElementById("sidebarToggleBtn");
+  btn.textContent = isCollapsed ? "▶" : "◀";
+  btn.setAttribute("aria-label", isCollapsed ? "Expandir sidebar" : "Contrair sidebar");
+  btn.title = isCollapsed ? "Expandir sidebar" : "Contrair sidebar";
+}
+
+function applyTheme(theme) {
+  const isLight = theme === "light";
+  document.body.classList.toggle("light-mode", isLight);
+  currentTheme = isLight ? "light" : "dark";
+  const btn = document.getElementById("themeToggleBtn");
+  if (!btn) return;
+  btn.textContent = isLight ? "🌙" : "☀";
+  btn.setAttribute("aria-label", isLight ? "Ativar modo escuro" : "Ativar modo branco");
+  btn.title = isLight ? "Ativar modo escuro" : "Ativar modo branco";
+  localStorage.setItem("englishCoachTheme", currentTheme);
+}
+
+function toggleTheme() {
+  applyTheme(currentTheme === "light" ? "dark" : "light");
+}
+
+function bindEvents() {
+  document.getElementById("categorySelect").addEventListener("change", (e) => {
+    selectedCategory = e.target.value;
+    updateTopicOptions();
+  });
+  document.getElementById("topicSelect").addEventListener("change", (e) => {
+    selectedTopicId = e.target.value;
+  });
+  document.getElementById("generateBtn").addEventListener("click", generateLesson);
+  document.getElementById("randomBtn").addEventListener("click", randomLesson);
+  document.getElementById("exportBtn").addEventListener("click", exportReport);
+  document.getElementById("pauseTimerBtn").addEventListener("click", pauseTimer);
+  document.getElementById("resumeTimerBtn").addEventListener("click", resumeTimer);
+  document.getElementById("closeTimerBtn").addEventListener("click", closeTimer);
+  document.getElementById("themeToggleBtn").addEventListener("click", toggleTheme);
+  document.getElementById("sidebarToggleBtn").addEventListener("click", toggleSidebar);
+  document.getElementById("mainArea").addEventListener("click", (ev) => {
+    const grammarBtn = ev.target.closest(".js-check-grammar");
+    if (grammarBtn) {
+      const qid = grammarBtn.dataset.questionId;
+      const answers = deserializeAnswers(decodeHtmlAttr(grammarBtn.dataset.answer || ""));
+      const sentence = decodeHtmlAttr(grammarBtn.dataset.sentence || "");
+      checkGrammar(qid, answers, sentence);
+      return;
+    }
+    const fillBtn = ev.target.closest(".js-check-fill");
+    if (fillBtn) {
+      const qid = fillBtn.dataset.questionId;
+      const answers = deserializeAnswers(decodeHtmlAttr(fillBtn.dataset.answer || ""));
+      const sentence = decodeHtmlAttr(fillBtn.dataset.sentence || "");
+      checkFill(qid, answers, sentence);
+    }
+  });
+  document.addEventListener("keydown", (ev) => {
+    if (ev.altKey && ev.key.toLowerCase() === "g") generateLesson();
+    if (ev.altKey && ev.key.toLowerCase() === "n") goToPhase(Math.min(PHASES.length - 1, currentPhase + 1));
+    if (ev.altKey && ev.key.toLowerCase() === "p") goToPhase(Math.max(0, currentPhase - 1));
+  });
+}
+
+function init() {
+  const savedTheme = localStorage.getItem("englishCoachTheme") || "dark";
+  applyTheme(savedTheme === "light" ? "light" : "dark");
+  loadState();
+  predefinedQuestions = buildPredefinedQuestions();
+  updateCategoryOptions();
+  updateTopicOptions();
+  bindEvents();
+  updatePhaseList();
+}
+
+init();
 </script>
 </body>
 </html>
