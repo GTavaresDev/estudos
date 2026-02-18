@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Coach Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div>
+        <p class="logo">English Practice</p>
+        <h1 class="sidebar-title collapse-hide">English Coach<br>Studio</h1>
+        <p class="sidebar-sub collapse-hide">Conversas reais para aula, autoestudo e treino guiado.</p>
+      </div>
+      <div class="top-actions">
+        <button class="theme-btn" id="themeToggleBtn" type="button" aria-label="Ativar modo branco" title="Ativar modo branco">☀</button>
+        <button class="collapse-btn" id="sidebarToggleBtn" type="button" aria-label="Contrair sidebar" title="Contrair sidebar">◀</button>
+      </div>
+    </div>
+
+    <div class="field-wrap collapse-hide">
+      <label class="field-label" for="levelSelect">Nível</label>
+      <select class="select" id="levelSelect" aria-label="Selecionar nível">
+        <option value="beginner">Beginner</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="advanced">Advanced</option>
+      </select>
+    </div>
+
+    <div class="field-wrap collapse-hide">
+      <label class="field-label" for="modeSelect">Modo de estudo</label>
+      <select class="select" id="modeSelect" aria-label="Selecionar modo">
+        <option value="lesson">Lesson</option>
+        <option value="practice">Practice</option>
+        <option value="selfstudy">Self-Study</option>
+      </select>
+    </div>
+
+    <div class="field-wrap collapse-hide">
+      <label class="field-label" for="categorySelect">Categoria</label>
+      <select class="select" id="categorySelect" aria-label="Selecionar categoria"></select>
+    </div>
+
+    <div class="field-wrap collapse-hide">
+      <label class="field-label" for="topicSelect">Tópico</label>
+      <select class="select" id="topicSelect" aria-label="Selecionar tópico"></select>
+      <input class="topic-input" id="customTopicInput" placeholder="Ou escreva um tópico customizado (opcional)" maxlength="50" aria-label="Tópico customizado">
+    </div>
+
+    <div class="btn-row collapse-hide">
+      <button class="btn btn-primary" id="generateBtn" type="button">Gerar aula</button>
+      <button class="btn btn-blue" id="randomBtn" type="button">Modo aleatório</button>
+      <button class="btn" id="exportBtn" type="button">Exportar relatório</button>
+    </div>
+
+    <div class="collapse-hide" style="width:100%">
+      <p class="field-label" style="margin-bottom:0.45rem">Fases</p>
+      <div class="phase-list" id="phaseList"></div>
+    </div>
+
+    <div class="tip-box collapse-hide">
+      <strong>Atalhos</strong>
+      <div>Alt+G: gerar aula<br>Alt+N: próxima fase<br>Alt+P: fase anterior</div>
+      <div style="margin-top:0.4rem">Use os favoritos para montar listas pessoais.</div>
+    </div>
+  </aside>
+
+  <main class="main" id="mainArea">
+    <div class="placeholder">
+      <div class="placeholder-icon">💬</div>
+      <p>Escolha nível, categoria e tópico. Depois clique em <strong>"Gerar aula"</strong>.</p>
+      <p class="small">Você terá perguntas prontas, exercícios práticos, vocabulário e espaço de feedback.</p>
+    </div>
+  </main>
+</div>
+
+<div class="timer-overlay" id="timerOverlay" aria-live="polite">
+  <div class="timer-circle">
+    <span class="timer-num" id="timerNum">60</span>
+    <span class="timer-label">segundos</span>
+  </div>
+  <p class="timer-q" id="timerQ"></p>
+  <div class="btn-row">
+    <button class="btn btn-green" id="pauseTimerBtn" type="button">Pausar</button>
+    <button class="btn btn-blue" id="resumeTimerBtn" type="button">Retomar</button>
+    <button class="btn btn-danger" id="closeTimerBtn" type="button">Fechar</button>
+  </div>
+</div>
+
+<script src="../data/topics.js"></script>
+<script src="../data/questions.js"></script>
+<script src="../data/vocabulary.js"></script>
+<script src="../data/expressions.js"></script>
+<script src="../js/app.js"></script>
+</body>
+</html>
